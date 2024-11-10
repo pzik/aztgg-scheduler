@@ -17,4 +17,13 @@ public class RestClientConfig {
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
+
+    @Bean(name = "woowahanCareersPublicRestClient")
+    public RestClient woowahanCareersPublicRestClient() {
+        return RestClient.builder()
+                .baseUrl("https://career.woowahan.com")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
 }
