@@ -1,6 +1,7 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper;
 
 import com.aztgg.scheduler.global.crawler.Scraper;
+import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import org.springframework.web.client.RestClient;
 
@@ -45,6 +46,7 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                 .map(item -> RecruitmentNoticeDto.builder()
                         .jobOfferTitle(item.jobOfferTitle)
                         .url(JOB_DETAIL_URL + "/" + item.realId)
+                        .hash(HashUtils.encrypt(item.realId))
                         .startAt(item.regDate)
                         .endAt(item.endDate)
                         .build())

@@ -1,6 +1,7 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper;
 
 import com.aztgg.scheduler.global.crawler.Scraper;
+import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import org.springframework.web.client.RestClient;
 
@@ -47,6 +48,7 @@ public class WoowahanNoticesScraper implements Scraper<List<RecruitmentNoticeDto
                     return RecruitmentNoticeDto.builder()
                             .url(url)
                             .jobOfferTitle(item.recruitName)
+                            .hash(HashUtils.encrypt(url))
                             .startAt(startOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())
                             .endAt(endOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())
                             .build();

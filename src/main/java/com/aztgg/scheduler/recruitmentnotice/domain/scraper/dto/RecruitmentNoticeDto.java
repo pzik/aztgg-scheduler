@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public record RecruitmentNoticeDto(String jobOfferTitle,
                                    String url,
+                                   String hash,
                                    LocalDateTime startAt,
                                    LocalDateTime endAt) {
 
