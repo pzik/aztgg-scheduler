@@ -1,14 +1,15 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper;
 
 import com.aztgg.scheduler.global.crawler.Scraper;
-import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.KakaoRecruitmentNoticeDto;
+import com.aztgg.scheduler.global.util.HashUtils;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class KakaoNoticesScraper implements Scraper<List<KakaoRecruitmentNoticeDto>> {
+public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private static final String JOB_DETAIL_URL = "https://careers.kakao.com/jobs";
 
@@ -27,7 +28,7 @@ public class KakaoNoticesScraper implements Scraper<List<KakaoRecruitmentNoticeD
     }
 
     @Override
-    public List<KakaoRecruitmentNoticeDto> scrap() throws IOException {
+    public List<RecruitmentNoticeDto> scrap() throws IOException {
         KakaoCareersApiResponseDto response = kakaoCareersPublicRestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/job-list")
                         .queryParam("skillSet", "")
@@ -42,9 +43,10 @@ public class KakaoNoticesScraper implements Scraper<List<KakaoRecruitmentNoticeD
 
         // dto로 변환 후 응답
         return response.jobList.stream()
-                .map(item -> KakaoRecruitmentNoticeDto.builder()
+                .map(item -> RecruitmentNoticeDto.builder()
                         .jobOfferTitle(item.jobOfferTitle)
                         .url(JOB_DETAIL_URL + "/" + item.realId)
+                        .hash(HashUtils.encrypt(item.realId))
                         .startAt(item.regDate)
                         .endAt(item.endDate)
                         .build())
