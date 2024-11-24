@@ -26,4 +26,13 @@ public class RestClientConfig {
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
+
+    @Bean(name = "naverCareersPublicRestClient")
+    public RestClient naverCareersPublicRestClient() {
+        return RestClient.builder()
+                .baseUrl("https://recruit.navercorp.com/rcrt/loadJobList.do")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
 }
