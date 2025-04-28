@@ -26,4 +26,13 @@ public class RestClientConfig {
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
+
+    @Bean(name = "tossCareersPublicRestClient")
+    public RestClient tossCareersPublicRestClient() {
+        return RestClient.builder()
+                .baseUrl("https://api-public.toss.im/api")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
 }

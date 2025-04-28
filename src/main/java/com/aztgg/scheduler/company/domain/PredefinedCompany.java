@@ -10,6 +10,7 @@ public enum PredefinedCompany {
     NAVER("네이버", "네이버"),
     KAKAO("카카오", "카카오"),
     WOOWAHAN("배달의민족", "배달의민족"),
+    TOSS("토스", "토스"),
     ;
 
     private final String korean;
