@@ -38,13 +38,14 @@ public abstract class RecruitmentNoticeCollectorService {
         List<RecruitmentNotice> beforeRecruitmentNotices = recruitmentNoticeRepository.findByCompanyCode(company.name());
         List<RecruitmentNotice> afterRecruitmentNotices = scrapResult.stream()
                 .map(item -> RecruitmentNotice.builder()
-                        .jobOfferTitle(item.jobOfferTitle())
+                        .jobOfferTitle(item.getJobOfferTitle())
                         .companyCode(company.name())
-                        .startAt(item.startAt())
-                        .endAt(item.endAt())
+                        .categories(item.getCategories())
+                        .startAt(item.getStartAt())
+                        .endAt(item.getEndAt())
                         .scrapedAt(LocalDateTime.now())
-                        .hash(item.hash())
-                        .url(item.url())
+                        .hash(item.getHash())
+                        .url(item.getUrl())
                         .build())
                 .toList();
 

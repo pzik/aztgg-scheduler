@@ -14,6 +14,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * 토스는 모든 카테고리의 공지를 하나의 API로 제공
@@ -46,15 +47,13 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                             .startAt(startOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime());
 
                     Optional<JobMetadata> optJobCategory = primaryJob.getJobCategoryMetadata();
-                    if (optJobCategory.isEmpty()) {
+                    if (optJobCategory.isEmpty() || Objects.isNull(optJobCategory.get().value)) { // 카테고리가 있어야함
                         return null;
                     }
-                    // 개발자, 디자이너 공고만 올림
-                    JobMetadata category = optJobCategory.get();
-                    if (category.isDeveloper() || category.isDesigner()) {
-                        return recruitmentNoticeDtoBuilder.build();
-                    }
-                    return null;
+                    JobMetadata categoryMeta = optJobCategory.get();
+                    return recruitmentNoticeDtoBuilder
+                            .categories(Set.of(categoryMeta.value.toString()))
+                            .build();
                 })
                 .filter(Objects::nonNull)
                 .toList();

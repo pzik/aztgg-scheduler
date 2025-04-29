@@ -5,11 +5,12 @@ import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
-@Builder
 @Table("recruitment_notice")
 public class RecruitmentNotice {
 
@@ -26,8 +27,8 @@ public class RecruitmentNotice {
     @Column("hash")
     private String hash;
 
-    @Column("tag")
-    private String tag;
+    @Column("categories")
+    private String categories;
 
     @Column("url")
     private String url;
@@ -49,7 +50,7 @@ public class RecruitmentNotice {
                              String companyCode,
                              String jobOfferTitle,
                              String hash,
-                             String tag,
+                             Set<String> categories,
                              String url,
                              int clickCount,
                              LocalDateTime scrapedAt,
@@ -59,7 +60,7 @@ public class RecruitmentNotice {
         this.companyCode = companyCode;
         this.jobOfferTitle = jobOfferTitle;
         this.hash = hash;
-        this.tag = tag;
+        this.categories = StringUtils.arrayToCommaDelimitedString(categories.toArray());
         this.url = url;
         this.clickCount = clickCount;
         this.scrapedAt = scrapedAt;
@@ -78,7 +79,7 @@ public class RecruitmentNotice {
                 ", companyCode='" + companyCode + '\'' +
                 ", jobOfferTitle='" + jobOfferTitle + '\'' +
                 ", hash='" + hash + '\'' +
-                ", tag='" + tag + '\'' +
+                ", categories='" + categories + '\'' +
                 ", url='" + url + '\'' +
                 ", clickCount=" + clickCount +
                 ", scrapedAt=" + scrapedAt +
