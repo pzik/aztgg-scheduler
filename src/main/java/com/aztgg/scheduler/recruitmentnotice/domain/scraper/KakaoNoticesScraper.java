@@ -7,7 +7,11 @@ import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
@@ -31,8 +35,8 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
     public List<RecruitmentNoticeDto> scrap() throws IOException {
         KakaoCareersApiResponseDto response = kakaoCareersPublicRestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/job-list")
-                        .queryParam("skillSet", "")
                         .queryParam("part", partType.getCode())
+                        .queryParam("skillSet", "") // part 내 스킬셋 전체 조회
                         .queryParam("company", "ALL")
                         .queryParam("keyword", "")
                         .queryParam("employeeType", "")
@@ -42,14 +46,24 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                 .body(KakaoCareersApiResponseDto.class);
 
         // dto로 변환 후 응답
-        return response.jobList.stream()
-                .map(item -> RecruitmentNoticeDto.builder()
-                        .jobOfferTitle(item.jobOfferTitle)
-                        .url(JOB_DETAIL_URL + "/" + item.realId)
-                        .hash(HashUtils.encrypt(item.realId))
-                        .startAt(item.regDate)
-                        .endAt(item.endDate)
-                        .build())
+        return response.jobList().stream()
+                .map(item -> {
+                    Set<String> categories = new HashSet<>();
+                    if (Objects.nonNull(item.skillSetList())) {
+                        categories = item.skillSetList().stream()
+                                .map(a -> a.skillSetType)
+                                .collect(Collectors.toSet());
+                    }
+
+                    return RecruitmentNoticeDto.builder()
+                            .jobOfferTitle(item.jobOfferTitle)
+                            .url(JOB_DETAIL_URL + "/" + item.realId)
+                            .hash(HashUtils.encrypt(item.realId))
+                            .categories(categories)
+                            .startAt(item.regDate)
+                            .endAt(item.endDate)
+                            .build();
+                })
                 .toList();
     }
 
@@ -69,8 +83,13 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                                LocalDateTime uptDate,
                                LocalDateTime regDate,
                                LocalDateTime endDate,
+                               List<SkillSetDto> skillSetList,
                                int recruitCount // 0명이면 채용 인원 지정없음 의미
                                ) {
+
+    }
+
+    private record SkillSetDto(Long id, String skillSetType) {
 
     }
 

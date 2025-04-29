@@ -11,24 +11,30 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-// 디자이너 채용은 따로 없는듯
-public class WoowahanNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
+/**
+ * 디자이너 채용은 따로 없는듯
+ * 우리는 Tech JobGroupCode 내 직무(jobCodes)를 카테고리로 뽑는다.
+ */
+public class WoowahanTechJobGroupCodeNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private static final String DETAIL_URL = "https://career.woowahan.com/recruitment/%s/detail";
+    private final String jobCode;
 
     private final RestClient woowahanCareersPublicRestClient;
 
-    public WoowahanNoticesScraper(RestClient woowahanCareersPublicRestClient) {
+    public WoowahanTechJobGroupCodeNoticesScraper(RestClient woowahanCareersPublicRestClient, String jobCode) {
         this.woowahanCareersPublicRestClient = woowahanCareersPublicRestClient;
+        this.jobCode = jobCode;
     }
 
     @Override
     public List<RecruitmentNoticeDto> scrap() throws IOException {
         WoowahanCareersApiResponseDto responseDto = woowahanCareersPublicRestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/w1/recruits")
-                        .queryParam("category", "jobGroupCodes:BA005001")
                         .queryParam("recruitCampaignSeq", 0)
-                        .queryParam("jobGroupCodes", "BA005001")
+                        .queryParam("jobGroupCodes", "BA005001") // Tech(BA005001), Product(3ABA005005) 등 상단 여러개 선택 가능
+                        .queryParam("category", "jobGroupCodes:BA005001")
+                        .queryParam("jobCodes", jobCode) // 그룹코드 내 직무
                         .queryParam("page", 0)
                         .queryParam("size", "9999")
                         .queryParam("sort", "updateDate,desc")
