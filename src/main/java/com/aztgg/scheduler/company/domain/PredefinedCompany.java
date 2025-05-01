@@ -11,6 +11,7 @@ public enum PredefinedCompany {
     KAKAO("카카오", "카카오"),
     WOOWAHAN("배달의민족", "배달의민족"),
     TOSS("토스", "토스"),
+    LINE("라인", "라인"),
     ;
 
     private final String korean;
