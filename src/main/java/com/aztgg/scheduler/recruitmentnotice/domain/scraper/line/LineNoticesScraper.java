@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.recruitmentnotice.domain.scraper;
+package com.aztgg.scheduler.recruitmentnotice.domain.scraper.line;
 
 import com.aztgg.scheduler.global.crawler.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
@@ -59,7 +59,7 @@ public class LineNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
                     LocalDateTime startAt = node.startDate().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
                     LocalDateTime endAt = Objects.isNull(node.endDate()) ? null : node.endDate().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
                     return RecruitmentNoticeDto.builder()
-                            .hash(HashUtils.encrypt(node.strapiId().toString()))
+                            .hash(HashUtils.encrypt(String.valueOf(node.hashCode())))
                             .url(String.format(DETAIL_URL, node.strapiId()))
                             .jobOfferTitle(node.title())
                             .categories(categories)

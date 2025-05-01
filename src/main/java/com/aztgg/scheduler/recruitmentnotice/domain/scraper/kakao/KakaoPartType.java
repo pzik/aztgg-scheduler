@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.recruitmentnotice.domain.scraper;
+package com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakao;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum KakaoPartType {
 
     TECHNOLOGY("TECHNOLOGY"),
-    DESIGN_BRAND_MARKETING("DESIGN/BRAND_MARKETING"),
+    DESIGN("DESIGN"),
     ;
 
     private final String code;

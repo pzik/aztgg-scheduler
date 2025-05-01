@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.recruitmentnotice.domain.scraper;
+package com.aztgg.scheduler.recruitmentnotice.domain.scraper.woowahan;
 
 import com.aztgg.scheduler.global.crawler.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
@@ -54,7 +54,7 @@ public class WoowahanTechJobGroupCodeNoticesScraper implements Scraper<List<Recr
                     return RecruitmentNoticeDto.builder()
                             .url(url)
                             .jobOfferTitle(item.recruitName)
-                            .hash(HashUtils.encrypt(url))
+                            .hash(HashUtils.encrypt(String.valueOf(item.hashCode())))
                             .startAt(startOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())
                             .endAt(endOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())
                             .build();

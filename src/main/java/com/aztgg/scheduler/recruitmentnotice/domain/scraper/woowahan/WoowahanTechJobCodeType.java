@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.recruitmentnotice.domain.scraper;
+package com.aztgg.scheduler.recruitmentnotice.domain.scraper.woowahan;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

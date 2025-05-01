@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.recruitmentnotice.domain.scraper;
+package com.aztgg.scheduler.recruitmentnotice.domain.scraper.toss;
 
 import com.aztgg.scheduler.global.crawler.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
@@ -42,7 +42,7 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                     OffsetDateTime startOffsetDateTime = primaryJob.firstPublished();
                     RecruitmentNoticeDto.RecruitmentNoticeDtoBuilder recruitmentNoticeDtoBuilder = RecruitmentNoticeDto.builder()
                             .url(url)
-                            .hash(HashUtils.encrypt(primaryJob.id().toString()))
+                            .hash(HashUtils.encrypt(String.valueOf(primaryJob.hashCode())))
                             .jobOfferTitle(primaryJob.title())
                             .startAt(startOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime());
 

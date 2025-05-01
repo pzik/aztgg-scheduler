@@ -3,7 +3,7 @@ package com.aztgg.scheduler.recruitmentnotice.application;
 import com.aztgg.scheduler.company.domain.PredefinedCompany;
 import com.aztgg.scheduler.global.crawler.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
-import com.aztgg.scheduler.recruitmentnotice.domain.scraper.LineNoticesScraper;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.line.LineNoticesScraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

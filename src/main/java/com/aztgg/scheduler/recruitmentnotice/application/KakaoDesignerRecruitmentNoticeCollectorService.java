@@ -3,8 +3,8 @@ package com.aztgg.scheduler.recruitmentnotice.application;
 import com.aztgg.scheduler.company.domain.PredefinedCompany;
 import com.aztgg.scheduler.global.crawler.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
-import com.aztgg.scheduler.recruitmentnotice.domain.scraper.KakaoNoticesScraper;
-import com.aztgg.scheduler.recruitmentnotice.domain.scraper.KakaoPartType;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakao.KakaoNoticesScraper;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakao.KakaoPartType;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class KakaoDesignerRecruitmentNoticeCollectorService extends RecruitmentN
 
         while (true) {
             try {
-                Scraper<List<RecruitmentNoticeDto>> scraper = new KakaoNoticesScraper(kakaoCareersPublicRestClient, page, KakaoPartType.DESIGN_BRAND_MARKETING);
+                Scraper<List<RecruitmentNoticeDto>> scraper = new KakaoNoticesScraper(kakaoCareersPublicRestClient, page, KakaoPartType.DESIGN);
                 List<RecruitmentNoticeDto> noticeList = scraper.scrap();
                 if (noticeList.isEmpty()) {
                     break;

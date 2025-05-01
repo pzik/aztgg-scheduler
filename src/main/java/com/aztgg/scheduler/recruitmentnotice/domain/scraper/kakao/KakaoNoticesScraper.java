@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.recruitmentnotice.domain.scraper;
+package com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakao;
 
 import com.aztgg.scheduler.global.crawler.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
@@ -13,6 +13,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * 카카오는 계열사별로 채용 사이트가 별도로 있음, 우리는 "카카오"만 추출한다.
+ * 계열사는 별도로 추출해야함
+ */
 public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private static final String JOB_DETAIL_URL = "https://careers.kakao.com/jobs";
@@ -37,7 +41,7 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                 .uri(uriBuilder -> uriBuilder.path("/job-list")
                         .queryParam("part", partType.getCode())
                         .queryParam("skillSet", "") // part 내 스킬셋 전체 조회
-                        .queryParam("company", "ALL")
+                        .queryParam("company", "KAKAO")
                         .queryParam("keyword", "")
                         .queryParam("employeeType", "")
                         .queryParam("page", page)
@@ -58,7 +62,7 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                     return RecruitmentNoticeDto.builder()
                             .jobOfferTitle(item.jobOfferTitle)
                             .url(JOB_DETAIL_URL + "/" + item.realId)
-                            .hash(HashUtils.encrypt(item.realId))
+                            .hash(HashUtils.encrypt(String.valueOf(item.hashCode())))
                             .categories(categories)
                             .startAt(item.regDate)
                             .endAt(item.endDate)
@@ -75,7 +79,7 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
     }
 
     // 우리에게 필요한 필드만 나열
-    private record KakaoJobDto(String realId, // hash 값으로 사용하자
+    private record KakaoJobDto(String realId,
                                boolean privateFlag,
                                boolean pinFlag,
                                boolean closeFlag,
