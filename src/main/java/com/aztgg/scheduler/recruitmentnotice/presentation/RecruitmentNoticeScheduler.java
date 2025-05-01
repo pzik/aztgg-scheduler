@@ -1,9 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.presentation;
 
-import com.aztgg.scheduler.recruitmentnotice.application.KakaoDesignerRecruitmentNoticeCollectorService;
-import com.aztgg.scheduler.recruitmentnotice.application.KakaoDevRecruitmentNoticeCollectorService;
-import com.aztgg.scheduler.recruitmentnotice.application.TossNoticeCollectorService;
-import com.aztgg.scheduler.recruitmentnotice.application.WoowahanNoticeCollectorService;
+import com.aztgg.scheduler.recruitmentnotice.application.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,6 +15,7 @@ public class RecruitmentNoticeScheduler {
     private final KakaoDesignerRecruitmentNoticeCollectorService kakaoDesignerRecruitmentNoticeCollectorService;
     private final WoowahanNoticeCollectorService woowahanNoticeCollectorService;
     private final TossNoticeCollectorService tossNoticeCollectorService;
+    private final LineNoticeCollectorService lineNoticeCollectorService;
 
     @Scheduled(fixedDelay = 30_000)
     public void collectKakaoDevNotices() {
@@ -37,5 +35,10 @@ public class RecruitmentNoticeScheduler {
     @Scheduled(fixedDelay = 180_000)
     public void collectTossTotalNotices() {
         tossNoticeCollectorService.collect();
+    }
+
+    @Scheduled(fixedDelay = 180_000)
+    public void collectLineTotalNotices() {
+        lineNoticeCollectorService.collect();
     }
 }
