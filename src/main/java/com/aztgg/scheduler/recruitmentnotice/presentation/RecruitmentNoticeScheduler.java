@@ -16,29 +16,35 @@ public class RecruitmentNoticeScheduler {
     private final WoowahanNoticeCollectorService woowahanNoticeCollectorService;
     private final TossNoticeCollectorService tossNoticeCollectorService;
     private final LineNoticeCollectorService lineNoticeCollectorService;
+    private final DaangnNoticeCollectorService daangnNoticeCollectorService;
 
-    @Scheduled(fixedDelay = 30_000)
+    @Scheduled(fixedDelay = 1800_000)
     public void collectKakaoDevNotices() {
         kakaoDevRecruitmentNoticeCollectorService.collect();
     }
 
-    @Scheduled(fixedDelay = 30_000)
+    @Scheduled(fixedDelay = 1800_000)
     public void collectKakaoDesignerNotices() {
         kakaoDesignerRecruitmentNoticeCollectorService.collect();
     }
 
-    @Scheduled(fixedDelay = 30_000)
+    @Scheduled(fixedDelay = 1800_000)
     public void collectWoowahanDevNotices() {
         woowahanNoticeCollectorService.collect();
     }
 
-    @Scheduled(fixedDelay = 180_000)
+    @Scheduled(fixedDelay = 1800_000)
     public void collectTossTotalNotices() {
         tossNoticeCollectorService.collect();
     }
 
-    @Scheduled(fixedDelay = 180_000)
+    @Scheduled(fixedDelay = 1800_000)
     public void collectLineTotalNotices() {
         lineNoticeCollectorService.collect();
+    }
+
+    @Scheduled(fixedDelay = 1800_000)
+    public void collectDaangnTotalNotices() {
+        daangnNoticeCollectorService.collect();
     }
 }
