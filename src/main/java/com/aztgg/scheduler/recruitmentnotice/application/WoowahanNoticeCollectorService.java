@@ -1,7 +1,8 @@
 package com.aztgg.scheduler.recruitmentnotice.application;
 
 import com.aztgg.scheduler.company.domain.PredefinedCompany;
-import com.aztgg.scheduler.global.crawler.Scraper;
+import com.aztgg.scheduler.company.domain.ScrapGroupCodeType;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.woowahan.WoowahanTechJobCodeType;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.woowahan.WoowahanTechJobGroupCodeNoticesScraper;
@@ -21,7 +22,7 @@ public class WoowahanNoticeCollectorService extends RecruitmentNoticeCollectorSe
 
     public WoowahanNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
                                           RestClient woowahanCareersPublicRestClient) {
-        super(recruitmentNoticeRepository, PredefinedCompany.WOOWAHAN);
+        super(recruitmentNoticeRepository, ScrapGroupCodeType.WOOWAHAN);
         this.woowahanCareersPublicRestClient = woowahanCareersPublicRestClient;
     }
 

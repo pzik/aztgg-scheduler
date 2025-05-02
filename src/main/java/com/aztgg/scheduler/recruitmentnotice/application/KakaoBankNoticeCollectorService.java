@@ -1,7 +1,7 @@
 package com.aztgg.scheduler.recruitmentnotice.application;
 
-import com.aztgg.scheduler.company.domain.PredefinedCompany;
-import com.aztgg.scheduler.global.crawler.Scraper;
+import com.aztgg.scheduler.company.domain.ScrapGroupCodeType;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakaobank.KakaoBankNoticesScraper;
@@ -20,7 +20,7 @@ public class KakaoBankNoticeCollectorService extends RecruitmentNoticeCollectorS
 
     public KakaoBankNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
                                                           RestClient kakaoBankCareersPublicRestClient) {
-        super(recruitmentNoticeRepository, PredefinedCompany.KAKAO_BANK);
+        super(recruitmentNoticeRepository, ScrapGroupCodeType.KAKAO_BANK);
         this.kakaoBankCareersPublicRestClient = kakaoBankCareersPublicRestClient;
     }
 

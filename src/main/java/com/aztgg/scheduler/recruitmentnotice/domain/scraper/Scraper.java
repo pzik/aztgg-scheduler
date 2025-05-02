@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.global.crawler;
+package com.aztgg.scheduler.recruitmentnotice.domain.scraper;
 
 import java.io.IOException;
 

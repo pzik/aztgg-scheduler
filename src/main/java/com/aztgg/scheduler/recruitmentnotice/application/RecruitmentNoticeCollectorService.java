@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.application;
 
-import com.aztgg.scheduler.company.domain.PredefinedCompany;
+import com.aztgg.scheduler.company.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNotice;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
@@ -20,26 +20,27 @@ import java.util.stream.Collectors;
 public abstract class RecruitmentNoticeCollectorService {
 
     private final RecruitmentNoticeRepository recruitmentNoticeRepository;
-    private final PredefinedCompany company;
+    private final ScrapGroupCodeType scrapGroupCodeType;
 
     public RecruitmentNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
-                                             PredefinedCompany company) {
+                                             ScrapGroupCodeType scrapGroupCodeType) {
         this.recruitmentNoticeRepository = recruitmentNoticeRepository;
-        this.company = company;
+        this.scrapGroupCodeType = scrapGroupCodeType;
     }
 
     protected abstract List<RecruitmentNoticeDto> result();
 
     public void collect() {
-        log.info("{} collect start", company.name());
+        log.info("{} scrapGroup collect start", scrapGroupCodeType.name());
         long startTime = System.currentTimeMillis();
 
         List<RecruitmentNoticeDto> scrapResult = this.result();
-        List<RecruitmentNotice> beforeRecruitmentNotices = recruitmentNoticeRepository.findByCompanyCode(company.name());
+        List<RecruitmentNotice> beforeRecruitmentNotices = recruitmentNoticeRepository.findByScrapGroupCode(scrapGroupCodeType.name());
         List<RecruitmentNotice> afterRecruitmentNotices = scrapResult.stream()
                 .map(item -> RecruitmentNotice.builder()
                         .jobOfferTitle(item.getJobOfferTitle())
-                        .companyCode(company.name())
+                        .companyCode(scrapGroupCodeType.getCompany().name())
+                        .scrapGroupCode(scrapGroupCodeType.name())
                         .categories(item.getCategories())
                         .startAt(item.getStartAt())
                         .endAt(item.getEndAt())
@@ -76,7 +77,7 @@ public abstract class RecruitmentNoticeCollectorService {
 
         long endTime = System.currentTimeMillis(); // 코드 끝난 시간
         long durationTimeSec = endTime - startTime;
-        log.info("{} collect end, duration = {} sec", company.name(), (durationTimeSec / 1000));
+        log.info("{} collect end, duration = {} sec", scrapGroupCodeType.name(), (durationTimeSec / 1000));
     }
 
     private Set<String> extractHashes(List<RecruitmentNotice> recruitmentNotices) {

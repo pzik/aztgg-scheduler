@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Getter
 public class RecruitmentNoticeDto {
+
     private String jobOfferTitle;
     private String url;
     private String hash;

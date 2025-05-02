@@ -21,6 +21,9 @@ public class RecruitmentNotice {
     @Column("companyCode")
     private String companyCode;
 
+    @Column("scrapGroupCode")
+    private String scrapGroupCode;
+
     @Column("jobOfferTitle")
     private String jobOfferTitle;
 
@@ -48,6 +51,7 @@ public class RecruitmentNotice {
     @Builder
     public RecruitmentNotice(Long recruitmentNoticeId,
                              String companyCode,
+                             String scrapGroupCode,
                              String jobOfferTitle,
                              String hash,
                              Set<String> categories,
@@ -58,6 +62,7 @@ public class RecruitmentNotice {
                              LocalDateTime endAt) {
         this.recruitmentNoticeId = recruitmentNoticeId;
         this.companyCode = companyCode;
+        this.scrapGroupCode = scrapGroupCode;
         this.jobOfferTitle = jobOfferTitle;
         this.hash = hash;
         this.categories = StringUtils.arrayToCommaDelimitedString(categories.toArray());
@@ -77,6 +82,7 @@ public class RecruitmentNotice {
         return "RecruitmentNotice{" +
                 "recruitmentNoticeId=" + recruitmentNoticeId +
                 ", companyCode='" + companyCode + '\'' +
+                ", scrapGroupCode='" + scrapGroupCode + '\'' +
                 ", jobOfferTitle='" + jobOfferTitle + '\'' +
                 ", hash='" + hash + '\'' +
                 ", categories='" + categories + '\'' +

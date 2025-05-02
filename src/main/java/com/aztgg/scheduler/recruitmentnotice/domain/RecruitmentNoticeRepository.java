@@ -8,5 +8,5 @@ import java.util.List;
 @Repository
 public interface RecruitmentNoticeRepository extends CrudRepository<RecruitmentNotice, Long> {
 
-    List<RecruitmentNotice> findByCompanyCode(String companyCode);
+    List<RecruitmentNotice> findByScrapGroupCode(String scrapGroupCode);
 }

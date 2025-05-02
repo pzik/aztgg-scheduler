@@ -1,7 +1,7 @@
 package com.aztgg.scheduler.recruitmentnotice.application;
 
-import com.aztgg.scheduler.company.domain.PredefinedCompany;
-import com.aztgg.scheduler.global.crawler.Scraper;
+import com.aztgg.scheduler.company.domain.ScrapGroupCodeType;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.line.LineNoticesScraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
@@ -20,7 +20,7 @@ public class LineNoticeCollectorService extends RecruitmentNoticeCollectorServic
 
     public LineNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
                                                      RestClient lineCareersPublicRestClient) {
-        super(recruitmentNoticeRepository, PredefinedCompany.LINE);
+        super(recruitmentNoticeRepository, ScrapGroupCodeType.LINE);
         this.lineCareersPublicRestClient = lineCareersPublicRestClient;
     }
 

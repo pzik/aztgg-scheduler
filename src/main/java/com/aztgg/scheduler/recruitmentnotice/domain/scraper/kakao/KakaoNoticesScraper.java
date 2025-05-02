@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakao;
 
-import com.aztgg.scheduler.global.crawler.Scraper;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import org.springframework.web.client.RestClient;

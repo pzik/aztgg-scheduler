@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.line;
 
-import com.aztgg.scheduler.global.crawler.Scraper;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
