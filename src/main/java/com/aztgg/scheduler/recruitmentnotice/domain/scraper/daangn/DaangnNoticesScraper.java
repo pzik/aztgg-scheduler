@@ -41,7 +41,7 @@ public class DaangnNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
                             .collect(Collectors.toSet());
 
                     return RecruitmentNoticeDto.builder()
-                            .hash(HashUtils.encrypt(String.valueOf(node.hashCode())))
+                            .hash(HashUtils.encrypt(String.valueOf(node.absoluteUrl())))
                             .jobOfferTitle(node.title())
                             .url(node.absoluteUrl())
                             .categories(categories)

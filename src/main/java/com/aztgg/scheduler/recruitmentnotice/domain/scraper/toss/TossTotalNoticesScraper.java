@@ -42,7 +42,7 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                     OffsetDateTime startOffsetDateTime = primaryJob.firstPublished();
                     RecruitmentNoticeDto.RecruitmentNoticeDtoBuilder recruitmentNoticeDtoBuilder = RecruitmentNoticeDto.builder()
                             .url(url)
-                            .hash(HashUtils.encrypt(String.valueOf(primaryJob.hashCode())))
+                            .hash(HashUtils.encrypt(String.valueOf(primaryJob.absoluteUrl())))
                             .jobOfferTitle(primaryJob.title())
                             .startAt(startOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime());
 
