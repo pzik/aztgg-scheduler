@@ -50,10 +50,10 @@ public abstract class RecruitmentNoticeCollectorService {
                 .toList();
 
         // delete
-        Set<String> beforeHashes = extractHashes(beforeRecruitmentNotices);
+        Set<String> afterHashes = extractHashes(afterRecruitmentNotices);
 
         Set<Long> deleteTargetIds = beforeRecruitmentNotices.stream()
-                .filter(item -> !beforeHashes.contains(item.getHash()))
+                .filter(item -> !afterHashes.contains(item.getHash()))
                 .map(RecruitmentNotice::getRecruitmentNoticeId)
                 .collect(Collectors.toSet());
 

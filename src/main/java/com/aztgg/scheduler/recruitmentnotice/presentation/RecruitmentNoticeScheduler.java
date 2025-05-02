@@ -11,40 +11,40 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RecruitmentNoticeScheduler {
 
-    private final KakaoDevRecruitmentNoticeCollectorService kakaoDevRecruitmentNoticeCollectorService;
-    private final KakaoDesignerRecruitmentNoticeCollectorService kakaoDesignerRecruitmentNoticeCollectorService;
+    private final KakaoRecruitmentNoticeCollectorService kakaoRecruitmentNoticeCollectorService;
     private final WoowahanNoticeCollectorService woowahanNoticeCollectorService;
     private final TossNoticeCollectorService tossNoticeCollectorService;
     private final LineNoticeCollectorService lineNoticeCollectorService;
     private final DaangnNoticeCollectorService daangnNoticeCollectorService;
+    private final KakaoBankNoticeCollectorService kakaoBankNoticeCollectorService;
 
-    @Scheduled(fixedDelay = 1800_000)
-    public void collectKakaoDevNotices() {
-        kakaoDevRecruitmentNoticeCollectorService.collect();
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectKakaoNotices() {
+        kakaoRecruitmentNoticeCollectorService.collect();
     }
 
-    @Scheduled(fixedDelay = 1800_000)
-    public void collectKakaoDesignerNotices() {
-        kakaoDesignerRecruitmentNoticeCollectorService.collect();
-    }
-
-    @Scheduled(fixedDelay = 1800_000)
+    @Scheduled(fixedDelay = 4_3200_000)
     public void collectWoowahanDevNotices() {
         woowahanNoticeCollectorService.collect();
     }
 
-    @Scheduled(fixedDelay = 1800_000)
+    @Scheduled(fixedDelay = 4_3200_000)
     public void collectTossTotalNotices() {
         tossNoticeCollectorService.collect();
     }
 
-    @Scheduled(fixedDelay = 1800_000)
+    @Scheduled(fixedDelay = 4_3200_000)
     public void collectLineTotalNotices() {
         lineNoticeCollectorService.collect();
     }
 
-    @Scheduled(fixedDelay = 1800_000)
+    @Scheduled(fixedDelay = 4_3200_000)
     public void collectDaangnTotalNotices() {
         daangnNoticeCollectorService.collect();
+    }
+
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectKakaoBankTotalNotices() {
+        kakaoBankNoticeCollectorService.collect();
     }
 }

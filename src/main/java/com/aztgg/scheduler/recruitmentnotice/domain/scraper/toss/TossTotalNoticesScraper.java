@@ -42,7 +42,7 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                     OffsetDateTime startOffsetDateTime = primaryJob.firstPublished();
                     RecruitmentNoticeDto.RecruitmentNoticeDtoBuilder recruitmentNoticeDtoBuilder = RecruitmentNoticeDto.builder()
                             .url(url)
-                            .hash(HashUtils.encrypt(String.valueOf(primaryJob.absoluteUrl())))
+                            .hash(HashUtils.encrypt(String.valueOf(primaryJob.hashCode())))
                             .jobOfferTitle(primaryJob.title())
                             .startAt(startOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime());
 
@@ -89,18 +89,5 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
     private record JobMetadata(Long id, Object value) {
 
-        public boolean isDeveloper() {
-            if (Objects.isNull(value) || !id.equals(4168924003L)) {
-                return false;
-            }
-            return ((String) value).contains("Engineering");
-        }
-
-        public boolean isDesigner() {
-            if (Objects.isNull(value) || !id.equals(4168924003L)) {
-                return false;
-            }
-            return value.equals("Design");
-        }
     }
 }

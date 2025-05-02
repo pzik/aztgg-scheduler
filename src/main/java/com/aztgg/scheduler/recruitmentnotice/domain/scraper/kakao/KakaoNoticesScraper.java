@@ -7,10 +7,7 @@ import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -22,24 +19,46 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
     private static final String JOB_DETAIL_URL = "https://careers.kakao.com/jobs";
 
     private final RestClient kakaoCareersPublicRestClient;
-    private final KakaoPartType partType;
-    private final int page;
 
-    public KakaoNoticesScraper(RestClient kakaoCareersPublicRestClient, int page, KakaoPartType partType) {
+    public KakaoNoticesScraper(RestClient kakaoCareersPublicRestClient) {
         this.kakaoCareersPublicRestClient = kakaoCareersPublicRestClient;
-        this.partType = partType;
-        this.page = page;
-
-        if (page < 1) {
-            throw new IndexOutOfBoundsException("page 는 1 이상이여야 합니다.");
-        }
     }
 
     @Override
     public List<RecruitmentNoticeDto> scrap() throws IOException {
-        KakaoCareersApiResponseDto response = kakaoCareersPublicRestClient.get()
+        int techPage = 1;
+        int designPage = 1;
+        Integer techTotalPage = null;
+        Integer designTotalPage = null;
+        List<RecruitmentNoticeDto> result = new ArrayList<>();
+
+        // 테크 추출
+        do {
+            KakaoCareersApiResponseDto response = response(techPage, KakaoPartType.TECHNOLOGY.name());
+            result.addAll(getResult(response));
+            if (techTotalPage == null) {
+                techTotalPage = response.totalPage();
+            }
+            techPage++;
+        } while (techPage <= techTotalPage);
+
+        // 디자인 추출
+        do {
+            KakaoCareersApiResponseDto response = response(designPage, KakaoPartType.DESIGN.name());
+            result.addAll(getResult(response));
+            if (designTotalPage == null) {
+                designTotalPage = response.totalPage();
+            }
+            techPage++;
+        } while (techPage <= designTotalPage);
+
+        return result;
+    }
+
+    private KakaoCareersApiResponseDto response(int page, String part) {
+        return kakaoCareersPublicRestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/job-list")
-                        .queryParam("part", partType.getCode())
+                        .queryParam("part", part)
                         .queryParam("skillSet", "") // part 내 스킬셋 전체 조회
                         .queryParam("company", "KAKAO")
                         .queryParam("keyword", "")
@@ -48,8 +67,9 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                         .build())
                 .retrieve()
                 .body(KakaoCareersApiResponseDto.class);
+    }
 
-        // dto로 변환 후 응답
+    private List<RecruitmentNoticeDto> getResult(KakaoCareersApiResponseDto response) {
         return response.jobList().stream()
                 .map(item -> {
                     Set<String> categories = new HashSet<>();

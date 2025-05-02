@@ -53,4 +53,13 @@ public class RestClientConfig {
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
+
+    @Bean(name = "kakaoBankCareersPublicRestClient")
+    public RestClient kakaoBankCareersPublicRestClient() {
+        return RestClient.builder()
+                .baseUrl("https://recruit.kakaobank.com/api")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
 }

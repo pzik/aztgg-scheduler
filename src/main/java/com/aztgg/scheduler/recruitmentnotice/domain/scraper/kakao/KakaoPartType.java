@@ -7,9 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum KakaoPartType {
 
-    TECHNOLOGY("TECHNOLOGY"),
-    DESIGN("DESIGN"),
+    TECHNOLOGY,
+    DESIGN,
     ;
-
-    private final String code;
 }
