@@ -57,7 +57,7 @@ public class LineNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
                     }
 
                     LocalDateTime startAt = node.startDate().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
-                    LocalDateTime endAt = Objects.isNull(node.endDate()) ? null : node.endDate().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+                    LocalDateTime endAt = null; // 무조건 상시인듯
                     return RecruitmentNoticeDto.builder()
                             .hash(HashUtils.encrypt(String.valueOf(node.hashCode())))
                             .url(String.format(DETAIL_URL, node.strapiId()))

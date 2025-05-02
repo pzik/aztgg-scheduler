@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,10 +61,14 @@ public class KakaoBankNoticesScraper implements Scraper<List<RecruitmentNoticeDt
     private List<RecruitmentNoticeDto> getResult(KakaoBankApiResponseDto response) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+        LocalDateTime now = LocalDateTime.now();
         return response.list().stream()
                 .map(item -> {
                     var startFormatter = formatter.parse(item.receiveStartDatetime(), java.time.LocalDateTime::from);
                     var endFormatter = formatter.parse(item.receiveEndDatetime(), java.time.LocalDateTime::from);
+                    if (endFormatter.isBefore(now)) {
+                        return null;
+                    }
 
                     return RecruitmentNoticeDto.builder()
                             .hash(HashUtils.encrypt(String.valueOf(item.hashCode())))
@@ -72,7 +78,9 @@ public class KakaoBankNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                             .startAt(startFormatter)
                             .endAt(endFormatter)
                             .build();
-                }).collect(Collectors.toList());
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     private record KakaoBankApiResponseDto(PagingDto paging, List<ListItemDto> list) {
