@@ -42,7 +42,7 @@ public class KakaoBankNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                 Thread.sleep(1000); // 1초 쉬고
             } catch (Exception e) {
                 log.error("unexpected exception", e);
-                return result;
+                throw new IllegalStateException();
             }
         } while (page <= totalPage);
         return result;
