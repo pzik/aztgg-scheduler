@@ -18,6 +18,7 @@ public class RecruitmentNoticeScheduler {
     private final DaangnNoticeCollectorService daangnNoticeCollectorService;
     private final KakaoBankNoticeCollectorService kakaoBankNoticeCollectorService;
     private final NaverNoticeControllerService naverNoticeControllerService;
+    private final CoupangNoticeControllerService coupangNoticeControllerService;
 
     @Scheduled(fixedDelay = 4_3200_000)
     public void collectKakaoNotices() {
@@ -52,5 +53,10 @@ public class RecruitmentNoticeScheduler {
     @Scheduled(fixedDelay = 4_3200_000)
     public void collectNaverTotalNotices() {
         naverNoticeControllerService.collect();
+    }
+
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectCoupangTotalNotices() {
+        coupangNoticeControllerService.collect();
     }
 }
