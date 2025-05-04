@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
@@ -76,8 +80,9 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
 
         }while(firstIndex < totalSize);
 
-
-        return jobListResponseAll;
+        return jobListResponseAll.stream()
+                .filter(distinctByKey(RecruitmentNoticeDto::getHash))
+                .collect(Collectors.toList());
 
     }
 
@@ -96,5 +101,10 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                                String endYmdTime, // 채용 마감일
                                String subJobCdNm // 카테고리
                                ){
+    }
+
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
     }
 }
