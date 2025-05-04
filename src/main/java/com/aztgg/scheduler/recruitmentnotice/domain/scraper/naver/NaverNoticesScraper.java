@@ -22,7 +22,6 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
 
     private final RestClient naverCareersPublicRestClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final String PATH = "https://recruit.navercorp.com/rcrt/view.do?annoId=";
 
 
     public NaverNoticesScraper(RestClient naverCareersPublicRestClient) {

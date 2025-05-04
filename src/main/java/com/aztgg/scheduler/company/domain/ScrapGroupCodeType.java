@@ -14,6 +14,7 @@ public enum ScrapGroupCodeType {
     TOSS(PredefinedCompany.TOSS),
     LINE(PredefinedCompany.LINE),
     DAANGN(PredefinedCompany.DAANGN),
+    COUPANG(PredefinedCompany.COUPANG),
     ;
 
     private final PredefinedCompany company;
