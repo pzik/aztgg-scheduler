@@ -1,5 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.daangn;
 
+import com.aztgg.scheduler.company.domain.Corporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
@@ -39,12 +40,14 @@ public class DaangnNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
                     Set<String> categories = node.departments().stream()
                             .map(a -> depMap.get(a.id()))
                             .collect(Collectors.toSet());
+                    Set<String> corporateCodes = Set.of(Corporate.fromId(node.corporate()).name());
 
                     return RecruitmentNoticeDto.builder()
                             .hash(HashUtils.encrypt(String.valueOf(node.hashCode())))
                             .jobOfferTitle(node.title())
                             .url(node.absoluteUrl())
                             .categories(categories)
+                            .corporateCodes(corporateCodes)
                             .build();
                 }).collect(Collectors.toList());
     }
@@ -66,7 +69,7 @@ public class DaangnNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
     }
 
     private record DepartmentFilteredJobPostNodeDto(String title,
-                                                    String corporate,
+                                                    String corporate, // 법인
                                                     String absoluteUrl,
                                                     List<NodeDepartmentDto> departments // 직무
     ) {

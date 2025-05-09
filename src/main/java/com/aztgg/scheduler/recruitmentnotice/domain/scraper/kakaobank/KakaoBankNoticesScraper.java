@@ -1,5 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakaobank;
 
+import com.aztgg.scheduler.company.domain.Corporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
@@ -75,6 +76,7 @@ public class KakaoBankNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                             .url("https://" + item.recruitNoticeUrl())
                             .jobOfferTitle(item.recruitNoticeName())
                             .categories(Set.of(item.recruitClassName()))
+                            .corporateCodes(Set.of(Corporate.KAKAO_BANK.name()))
                             .startAt(startFormatter)
                             .endAt(endFormatter)
                             .build();
