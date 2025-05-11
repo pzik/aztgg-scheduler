@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RecruitmentNoticeScheduler {
 
-    private final KakaoRecruitmentNoticeCollectorService kakaoRecruitmentNoticeCollectorService;
+    private final KakaoCorpNoticeCollectorService kakaoCorpNoticeCollectorService;
     private final WoowahanNoticeCollectorService woowahanNoticeCollectorService;
     private final TossNoticeCollectorService tossNoticeCollectorService;
     private final LineNoticeCollectorService lineNoticeCollectorService;
@@ -19,10 +19,11 @@ public class RecruitmentNoticeScheduler {
     private final KakaoBankNoticeCollectorService kakaoBankNoticeCollectorService;
     private final NaverNoticeControllerService naverNoticeControllerService;
     private final CoupangNoticeControllerService coupangNoticeControllerService;
+    private final KakaoGreetingNoticeCollectorService kakaoGreetingNoticeCollectorService;
 
     @Scheduled(fixedDelay = 4_3200_000)
     public void collectKakaoNotices() {
-        kakaoRecruitmentNoticeCollectorService.collect();
+        kakaoCorpNoticeCollectorService.collect();
     }
 
     @Scheduled(fixedDelay = 4_3200_000)
@@ -48,6 +49,11 @@ public class RecruitmentNoticeScheduler {
     @Scheduled(fixedDelay = 4_3200_000)
     public void collectKakaoBankTotalNotices() {
         kakaoBankNoticeCollectorService.collect();
+    }
+
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectKakaoGreetingNotices() {
+        kakaoGreetingNoticeCollectorService.collect();
     }
 
     @Scheduled(fixedDelay = 4_3200_000)

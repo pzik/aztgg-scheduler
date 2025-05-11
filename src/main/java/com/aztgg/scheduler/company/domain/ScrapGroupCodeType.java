@@ -12,6 +12,7 @@ public enum ScrapGroupCodeType {
 
     NAVER(PredefinedCompany.NAVER),
     KAKAO(PredefinedCompany.KAKAO),
+    KAKAO_GREETING(PredefinedCompany.KAKAO),
     KAKAO_BANK(PredefinedCompany.KAKAO),
     WOOWAHAN(PredefinedCompany.WOOWAHAN),
     TOSS(PredefinedCompany.TOSS),

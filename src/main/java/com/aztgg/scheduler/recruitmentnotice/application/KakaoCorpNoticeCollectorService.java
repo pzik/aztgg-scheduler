@@ -14,12 +14,12 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class KakaoRecruitmentNoticeCollectorService extends RecruitmentNoticeCollectorService {
+public class KakaoCorpNoticeCollectorService extends RecruitmentNoticeCollectorService {
 
     private final RestClient kakaoCareersPublicRestClient;
 
-    public KakaoRecruitmentNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
-                                                  RestClient kakaoCareersPublicRestClient) {
+    public KakaoCorpNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
+                                           RestClient kakaoCareersPublicRestClient) {
         super(recruitmentNoticeRepository, ScrapGroupCodeType.KAKAO);
         this.kakaoCareersPublicRestClient = kakaoCareersPublicRestClient;
     }
