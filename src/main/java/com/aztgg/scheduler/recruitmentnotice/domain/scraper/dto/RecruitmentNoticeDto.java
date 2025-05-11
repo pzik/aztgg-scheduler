@@ -14,20 +14,31 @@ public class RecruitmentNoticeDto {
     private String jobOfferTitle;
     private String url;
     private String hash;
+    private Set<String> corporateCodes;
     private Set<String> categories;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
 
     @Builder
-    public RecruitmentNoticeDto(String jobOfferTitle, String url, String hash, Set<String> categories, LocalDateTime startAt, LocalDateTime endAt) {
+    public RecruitmentNoticeDto(String jobOfferTitle,
+                                String url,
+                                String hash,
+                                Set<String> categories,
+                                Set<String> corporateCodes,
+                                LocalDateTime startAt,
+                                LocalDateTime endAt) {
         this.jobOfferTitle = jobOfferTitle;
         this.url = url;
         this.hash = hash;
         this.categories = categories;
+        this.corporateCodes = corporateCodes;
         this.startAt = startAt;
         this.endAt = endAt;
         if (CollectionUtils.isEmpty(categories)) {
             this.categories = new HashSet<>();
+        }
+        if (CollectionUtils.isEmpty(corporateCodes)) {
+            this.corporateCodes = new HashSet<>();
         }
     }
 

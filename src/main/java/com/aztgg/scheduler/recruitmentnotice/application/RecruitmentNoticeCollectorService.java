@@ -42,6 +42,7 @@ public abstract class RecruitmentNoticeCollectorService {
                         .companyCode(scrapGroupCodeType.getCompany().name())
                         .scrapGroupCode(scrapGroupCodeType.name())
                         .categories(item.getCategories())
+                        .corporateCodes(item.getCorporateCodes())
                         .startAt(item.getStartAt())
                         .endAt(item.getEndAt())
                         .scrapedAt(LocalDateTime.now())

@@ -1,5 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.line;
 
+import com.aztgg.scheduler.company.domain.Corporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
@@ -49,10 +50,20 @@ public class LineNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
                         return null;
                     }
 
+                    // 카테고리 추출
                     Set<String> categories = new HashSet<>();
                     if (Objects.nonNull(node.jobUnits)) {
                         categories = node.jobUnits().stream()
                                 .map(StrapiJobEdgeNodeJobUnitDto::name)
+                                .collect(Collectors.toSet());
+                    }
+
+                    // 법인 추출
+                    Set<String> corporates = new HashSet<>();
+                    if (Objects.nonNull(node.companies())) {
+                        corporates = node.companies().stream()
+                                .map(a -> Corporate.fromId(a.name()))
+                                .map(Enum::name)
                                 .collect(Collectors.toSet());
                     }
 
@@ -63,6 +74,7 @@ public class LineNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
                             .url(String.format(DETAIL_URL, node.strapiId()))
                             .jobOfferTitle(node.title())
                             .categories(categories)
+                            .corporateCodes(corporates)
                             .startAt(startAt)
                             .endAt(endAt)
                             .build();
@@ -96,6 +108,7 @@ public class LineNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
                                         @JsonProperty("start_date") OffsetDateTime startDate,
                                         String title,
                                         List<StrapiJobEdgeNodeCityDto> cities, // 유효한 도시만
+                                        List<StrapiJobEdgeNodeCompanyDto> companies,
                                         @JsonProperty("job_unit") List<StrapiJobEdgeNodeJobUnitDto> jobUnits // 직무카테고리로 쓰자
                                         ) {
 
@@ -115,6 +128,10 @@ public class LineNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
             }
             return name.equals("Seoul") || name.equals("Gwacheon") || name.equals("Bundang");
         }
+    }
+
+    private record StrapiJobEdgeNodeCompanyDto(String name) {
+
     }
 
     private record StrapiJobEdgeNodeJobUnitDto(String name) {

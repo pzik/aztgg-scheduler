@@ -1,5 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakao;
 
+import com.aztgg.scheduler.company.domain.Corporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
@@ -84,6 +85,7 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                             .url(JOB_DETAIL_URL + "/" + item.realId)
                             .hash(HashUtils.encrypt(String.valueOf(item.hashCode())))
                             .categories(categories)
+                            .corporateCodes(Set.of(Corporate.KAKAO.name()))
                             .startAt(item.regDate)
                             .endAt(item.endDate)
                             .build();

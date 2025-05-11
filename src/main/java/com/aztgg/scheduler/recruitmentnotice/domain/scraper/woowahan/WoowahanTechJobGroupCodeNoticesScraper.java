@@ -1,5 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.woowahan;
 
+import com.aztgg.scheduler.company.domain.Corporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
@@ -10,6 +11,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 디자이너 채용은 따로 없는듯
@@ -54,6 +56,7 @@ public class WoowahanTechJobGroupCodeNoticesScraper implements Scraper<List<Recr
                     return RecruitmentNoticeDto.builder()
                             .url(url)
                             .jobOfferTitle(item.recruitName)
+                            .corporateCodes(Set.of(Corporate.BAEMIN.name()))
                             .hash(HashUtils.encrypt(String.valueOf(item.hashCode())))
                             .startAt(startOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())
                             .endAt(endOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())

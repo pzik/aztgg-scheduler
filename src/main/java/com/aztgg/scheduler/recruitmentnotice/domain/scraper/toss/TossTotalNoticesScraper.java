@@ -1,5 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.toss;
 
+import com.aztgg.scheduler.company.domain.Corporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
@@ -11,10 +12,8 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 토스는 모든 카테고리의 공지를 하나의 API로 제공
@@ -50,9 +49,26 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                     if (optJobCategory.isEmpty() || Objects.isNull(optJobCategory.get().value)) { // 카테고리가 있어야함
                         return null;
                     }
+
+                    // 공고 대상 법인 추출
+                    Set<String> corporates = new HashSet<>();
+                    if (Objects.nonNull(item.jobs())) {
+                        corporates = item.jobs().stream()
+                                .map(JobDto::getJobCorpMetadata)
+                                .filter(Optional::isPresent)
+                                .map(Optional::get)
+                                .filter(a -> Objects.nonNull(a.value()))
+                                .map(a -> String.valueOf(a.value()))
+                                .map(Corporate::fromId)
+                                .map(Corporate::name)
+                                .collect(Collectors.toSet());
+                    }
+
+                    // 카테고리 추출
                     JobMetadata categoryMeta = optJobCategory.get();
                     return recruitmentNoticeDtoBuilder
                             .categories(Set.of(categoryMeta.value.toString()))
+                            .corporateCodes(corporates)
                             .build();
                 })
                 .filter(Objects::nonNull)
@@ -65,7 +81,10 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
     }
 
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-    private record JobItemDto(Long id, PrimaryJobDto primaryJob) {
+    private record JobItemDto(Long id,
+                              PrimaryJobDto primaryJob, // 계열사들 공통 공고를 묶는 최상단공고
+                              List<JobDto> jobs // 각 계열사 or 계열사 내 포지션별 공고
+    ) {
 
     }
 
@@ -78,6 +97,19 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
             }
             return metadata.stream()
                     .filter(item -> item.id().equals(4168924003L))
+                    .findFirst();
+        }
+    }
+
+    @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+    private record JobDto(List<JobMetadata> metadata) {
+
+        public Optional<JobMetadata> getJobCorpMetadata() {
+            if (CollectionUtils.isEmpty(metadata)) {
+                return Optional.empty();
+            }
+            return metadata.stream()
+                    .filter(item -> item.id().equals(4169410003L))
                     .findFirst();
         }
     }

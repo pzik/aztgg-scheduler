@@ -30,6 +30,9 @@ public class RecruitmentNotice {
     @Column("hash")
     private String hash;
 
+    @Column("corporateCodes")
+    private String corporateCodes;
+
     @Column("categories")
     private String categories;
 
@@ -55,6 +58,7 @@ public class RecruitmentNotice {
                              String jobOfferTitle,
                              String hash,
                              Set<String> categories,
+                             Set<String> corporateCodes,
                              String url,
                              int clickCount,
                              LocalDateTime scrapedAt,
@@ -66,6 +70,7 @@ public class RecruitmentNotice {
         this.jobOfferTitle = jobOfferTitle;
         this.hash = hash;
         this.categories = StringUtils.arrayToCommaDelimitedString(categories.toArray());
+        this.corporateCodes = StringUtils.arrayToCommaDelimitedString(corporateCodes.toArray());
         this.url = url;
         this.clickCount = clickCount;
         this.scrapedAt = scrapedAt;
@@ -86,6 +91,7 @@ public class RecruitmentNotice {
                 ", jobOfferTitle='" + jobOfferTitle + '\'' +
                 ", hash='" + hash + '\'' +
                 ", categories='" + categories + '\'' +
+                ", corporateCodes='" + corporateCodes + '\'' +
                 ", url='" + url + '\'' +
                 ", clickCount=" + clickCount +
                 ", scrapedAt=" + scrapedAt +
