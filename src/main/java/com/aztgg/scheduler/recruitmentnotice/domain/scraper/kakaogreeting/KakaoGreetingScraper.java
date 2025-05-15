@@ -1,7 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakaogreeting;
 
 import com.aztgg.scheduler.company.domain.Corporate;
-import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import org.jsoup.Jsoup;
@@ -81,7 +80,6 @@ public class KakaoGreetingScraper implements Scraper<List<RecruitmentNoticeDto>>
                     .jobOfferTitle(title)
                     .categories(Set.of(category))
                     .url(detailUrl)
-                    .hash(HashUtils.encrypt(title + detailId + corp.name()))
                     .build();
 
             result.add(noticeDto);

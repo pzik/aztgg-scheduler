@@ -1,12 +1,12 @@
 package com.aztgg.scheduler.recruitmentnotice.application;
 
 import com.aztgg.scheduler.company.domain.ScrapGroupCodeType;
+import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNotice;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -45,32 +45,35 @@ public abstract class RecruitmentNoticeCollectorService {
                         .corporateCodes(item.getCorporateCodes())
                         .startAt(item.getStartAt())
                         .endAt(item.getEndAt())
-                        .scrapedAt(LocalDateTime.now())
-                        .hash(item.getHash())
+                        .hash(HashUtils.encrypt(String.valueOf(item.hashCode())))
                         .url(item.getUrl())
                         .build())
                 .toList();
 
-        // delete
-        Set<String> afterHashes = extractHashes(afterRecruitmentNotices);
+        // delete (detail url이 before엔 존재했으나 after에 존재하지 않으면 삭제)
+        Set<String> afterUrls = afterRecruitmentNotices.stream()
+                .map(RecruitmentNotice::getUrl)
+                .collect(Collectors.toSet());
 
         Set<Long> deleteTargetIds = beforeRecruitmentNotices.stream()
-                .filter(item -> !afterHashes.contains(item.getHash()))
+                .filter(item -> !afterUrls.contains(item.getUrl()))
                 .map(RecruitmentNotice::getRecruitmentNoticeId)
                 .collect(Collectors.toSet());
 
         recruitmentNoticeRepository.deleteAllById(deleteTargetIds);
         beforeRecruitmentNotices.removeIf(recruitmentNotice -> deleteTargetIds.contains(recruitmentNotice.getRecruitmentNoticeId()));
 
-        // upsert
+        // upsert (detail url은 일치하나 hash값이 틀어졌다면 upsert)
         for (var recruitmentNotice : afterRecruitmentNotices) {
             RecruitmentNotice before = beforeRecruitmentNotices.stream()
-                    .filter(item -> item.getHash().equals(recruitmentNotice.getHash()))
+                    .filter(item -> item.getUrl().equals(recruitmentNotice.getUrl()))
                     .findFirst()
                     .orElse(null);
 
+            // before url이 존재
             if (Objects.nonNull(before)) {
-                recruitmentNotice.updateRecruitmentNoticeId(before.getRecruitmentNoticeId());
+                recruitmentNotice.updateRecruitmentNoticeIdAndCountAndScrapedAt(before.getRecruitmentNoticeId(),
+                        before.getClickCount(), before.getScrapedAt());
             }
         }
 
@@ -79,11 +82,5 @@ public abstract class RecruitmentNoticeCollectorService {
         long endTime = System.currentTimeMillis(); // 코드 끝난 시간
         long durationTimeSec = endTime - startTime;
         log.info("{} collect end, duration = {} sec", scrapGroupCodeType.name(), (durationTimeSec / 1000));
-    }
-
-    private Set<String> extractHashes(List<RecruitmentNotice> recruitmentNotices) {
-        return recruitmentNotices.stream()
-                .map(RecruitmentNotice::getHash)
-                .collect(Collectors.toSet());
     }
 }

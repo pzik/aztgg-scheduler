@@ -12,14 +12,7 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Slf4j
 public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
@@ -34,15 +27,17 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
 
     /**
      * 네이버 공고 스크랩
+     *
      * @return 네이버 공고 스크랩 목록
-     * */
+     */
     @Override
     public List<RecruitmentNoticeDto> scrap() throws IOException {
         int firstIndex = 0;
         int totalSize = Integer.MAX_VALUE;
         List<RecruitmentNoticeDto> jobListResponseAll = new ArrayList<>();
+        Set<String> noticeHashes = new HashSet<>();
 
-        do{
+        do {
             String uri = "/rcrt/loadJobList.do?annoId=&sw=&subJobCdArr=&sysCompanyCdArr=&empTypeCdArr=&entTypeCdArr=&workAreaCdArr=&firstIndex=" + firstIndex;
 
             String response = naverCareersPublicRestClient
@@ -52,20 +47,29 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                     .body(String.class);
 
             List<RecruitmentNoticeDto> jobListResponse = objectMapper.readValue(response,
-                    NaverCareersApiResponseDto.class).list.stream()
-                    .map(item -> RecruitmentNoticeDto.builder()
-                            .jobOfferTitle(item.annoSubject)
-                            .url(item.jobDetailLink)
-                            .categories(new HashSet<>(Set.of(item.subJobCdNm)))
-                            .hash(HashUtils.encrypt(item.annoSubject+item.staYmdTime+item.endYmdTime))
-                            .startAt(LocalDateTime.parse(item.staYmdTime, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")))
-                            .endAt(LocalDateTime.parse(item.endYmdTime, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")))
-                            .build()).toList();
+                            NaverCareersApiResponseDto.class).list.stream()
+                    .map(item -> {
+                        String itemHash = HashUtils.encrypt(item.annoSubject + item.staYmdTime + item.endYmdTime);
+                        if (noticeHashes.contains(itemHash)) {
+                            return null;
+                        }
+                        noticeHashes.add(itemHash);
+
+                        return RecruitmentNoticeDto.builder()
+                                .jobOfferTitle(item.annoSubject)
+                                .url(item.jobDetailLink)
+                                .categories(new HashSet<>(Set.of(item.subJobCdNm)))
+                                .startAt(LocalDateTime.parse(item.staYmdTime, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")))
+                                .endAt(LocalDateTime.parse(item.endYmdTime, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")))
+                                .build();
+                    })
+                    .filter(Objects::nonNull)
+                    .toList();
 
             jobListResponseAll.addAll(jobListResponse);
 
 
-            if(totalSize == Integer.MAX_VALUE){
+            if (totalSize == Integer.MAX_VALUE) {
                 JsonNode rootNode = objectMapper.readTree(response);
                 totalSize = rootNode.path("totalSize").asInt();
             }
@@ -78,11 +82,9 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                 throw new IllegalStateException();
             }
 
-        }while(firstIndex < totalSize);
+        } while (firstIndex < totalSize);
 
-        return jobListResponseAll.stream()
-                .filter(distinctByKey(RecruitmentNoticeDto::getHash))
-                .collect(Collectors.toList());
+        return jobListResponseAll;
 
     }
 
@@ -90,7 +92,7 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
             String result,
             List<NaverJobDto> list,
             Integer totalSize
-    ){
+    ) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -100,11 +102,6 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                                String staYmdTime, // 채용 시작일
                                String endYmdTime, // 채용 마감일
                                String subJobCdNm // 카테고리
-                               ){
-    }
-
-    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-        Set<Object> seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
+    ) {
     }
 }

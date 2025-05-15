@@ -76,10 +76,16 @@ public class RecruitmentNotice {
         this.scrapedAt = scrapedAt;
         this.startAt = startAt;
         this.endAt = endAt;
+
+        if (this.scrapedAt == null) {
+            this.scrapedAt = LocalDateTime.now();
+        }
     }
 
-    public void updateRecruitmentNoticeId(Long recruitmentNoticeId) {
+    public void updateRecruitmentNoticeIdAndCountAndScrapedAt(Long recruitmentNoticeId, int clickCount, LocalDateTime scrapedAt) {
         this.recruitmentNoticeId = recruitmentNoticeId;
+        this.clickCount = clickCount;
+        this.scrapedAt = scrapedAt;
     }
 
     @Override

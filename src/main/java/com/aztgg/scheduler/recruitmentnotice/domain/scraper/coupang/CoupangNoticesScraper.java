@@ -1,6 +1,5 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.coupang;
 
-import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +54,6 @@ public class CoupangNoticesScraper implements Scraper<List<RecruitmentNoticeDto>
 
                 RecruitmentNoticeDto dto = RecruitmentNoticeDto.builder()
                         .jobOfferTitle(jobTitle)
-                        .hash(HashUtils.encrypt(jobTitle+annoId+updateTime))
                         .url(annoUrl)
                         .build();
 

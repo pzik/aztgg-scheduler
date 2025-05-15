@@ -13,7 +13,6 @@ public class RecruitmentNoticeDto {
 
     private String jobOfferTitle;
     private String url;
-    private String hash;
     private Set<String> corporateCodes;
     private Set<String> categories;
     private LocalDateTime startAt;
@@ -22,14 +21,12 @@ public class RecruitmentNoticeDto {
     @Builder
     public RecruitmentNoticeDto(String jobOfferTitle,
                                 String url,
-                                String hash,
                                 Set<String> categories,
                                 Set<String> corporateCodes,
                                 LocalDateTime startAt,
                                 LocalDateTime endAt) {
         this.jobOfferTitle = jobOfferTitle;
         this.url = url;
-        this.hash = hash;
         this.categories = categories;
         this.corporateCodes = corporateCodes;
         this.startAt = startAt;

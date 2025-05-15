@@ -2,7 +2,6 @@ package com.aztgg.scheduler.recruitmentnotice.domain.scraper.line;
 
 import com.aztgg.scheduler.company.domain.Corporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
-import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.web.client.RestClient;
@@ -70,7 +69,6 @@ public class LineNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
                     LocalDateTime startAt = node.startDate().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
                     LocalDateTime endAt = null; // 무조건 상시인듯
                     return RecruitmentNoticeDto.builder()
-                            .hash(HashUtils.encrypt(String.valueOf(node.hashCode())))
                             .url(String.format(DETAIL_URL, node.strapiId()))
                             .jobOfferTitle(node.title())
                             .categories(categories)

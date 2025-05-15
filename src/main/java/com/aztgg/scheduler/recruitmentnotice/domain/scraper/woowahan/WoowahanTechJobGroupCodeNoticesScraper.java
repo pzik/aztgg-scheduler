@@ -2,7 +2,6 @@ package com.aztgg.scheduler.recruitmentnotice.domain.scraper.woowahan;
 
 import com.aztgg.scheduler.company.domain.Corporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
-import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import org.springframework.web.client.RestClient;
 
@@ -57,7 +56,6 @@ public class WoowahanTechJobGroupCodeNoticesScraper implements Scraper<List<Recr
                             .url(url)
                             .jobOfferTitle(item.recruitName)
                             .corporateCodes(Set.of(Corporate.BAEMIN.name()))
-                            .hash(HashUtils.encrypt(String.valueOf(item.hashCode())))
                             .startAt(startOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())
                             .endAt(endOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())
                             .build();
