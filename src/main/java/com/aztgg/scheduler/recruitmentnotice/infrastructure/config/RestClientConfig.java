@@ -9,6 +9,14 @@ import org.springframework.web.client.RestClient;
 @Configuration
 public class RestClientConfig {
 
+    @Bean(name = "baseRestClient")
+    public RestClient baseRestClient() {
+        return RestClient.builder()
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
+
     @Bean(name = "kakaoCareersPublicRestClient")
     public RestClient kakaoCareersPublicRestClient() {
         return RestClient.builder()
