@@ -34,6 +34,8 @@ dependencies {
 	implementation 'com.mysql:mysql-connector-j'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 
+	// google gemini
+	implementation 'com.google.genai:google-genai:1.0.0'
 }
 
 tasks.named('test') {

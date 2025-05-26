@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-public class RestClientConfig {
+public class CareersRestClientConfig {
 
     @Bean(name = "baseRestClient")
     public RestClient baseRestClient() {

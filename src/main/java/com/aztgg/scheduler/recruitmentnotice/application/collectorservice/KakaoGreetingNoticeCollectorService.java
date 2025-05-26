@@ -1,26 +1,32 @@
-package com.aztgg.scheduler.recruitmentnotice.application;
+package com.aztgg.scheduler.recruitmentnotice.application.collectorservice;
 
 import com.aztgg.scheduler.company.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
-import com.aztgg.scheduler.recruitmentnotice.domain.scraper.coupang.CoupangNoticesScraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakaogreeting.KakaoGreetingv11Scraper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
-public class CoupangNoticeControllerService extends RecruitmentNoticeCollectorService{
+public class KakaoGreetingNoticeCollectorService extends RecruitmentNoticeCollectorService {
 
-    public CoupangNoticeControllerService(RecruitmentNoticeRepository recruitmentNoticeRepository) {
-        super(recruitmentNoticeRepository, ScrapGroupCodeType.COUPANG);
+    private final RestClient baseRestClient;
+
+    public KakaoGreetingNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
+                                               RestClient baseRestClient) {
+        super(recruitmentNoticeRepository, ScrapGroupCodeType.KAKAO_GREETING);
+        this.baseRestClient = baseRestClient;
     }
+
     @Override
     protected List<RecruitmentNoticeDto> result() {
-        Scraper<List<RecruitmentNoticeDto>> scraper = new CoupangNoticesScraper();
+        Scraper<List<RecruitmentNoticeDto>> scraper = new KakaoGreetingv11Scraper(baseRestClient);
         List<RecruitmentNoticeDto> scrapResult = new ArrayList<>();
         try {
             scrapResult.addAll(scraper.scrap());

@@ -1,9 +1,9 @@
-package com.aztgg.scheduler.recruitmentnotice.application;
+package com.aztgg.scheduler.recruitmentnotice.application.collectorservice;
 
 import com.aztgg.scheduler.company.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
-import com.aztgg.scheduler.recruitmentnotice.domain.scraper.line.LineNoticesScraper;
+import com.aztgg.scheduler.recruitmentnotice.domain.scraper.toss.TossTotalNoticesScraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,19 +14,19 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class LineNoticeCollectorService extends RecruitmentNoticeCollectorService {
+public class TossNoticeCollectorService extends RecruitmentNoticeCollectorService {
 
-    private final RestClient lineCareersPublicRestClient;
+    private final RestClient tossCareersPublicRestClient;
 
-    public LineNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
-                                                     RestClient lineCareersPublicRestClient) {
-        super(recruitmentNoticeRepository, ScrapGroupCodeType.LINE);
-        this.lineCareersPublicRestClient = lineCareersPublicRestClient;
+    public TossNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
+                                          RestClient tossCareersPublicRestClient) {
+        super(recruitmentNoticeRepository, ScrapGroupCodeType.TOSS);
+        this.tossCareersPublicRestClient = tossCareersPublicRestClient;
     }
 
     @Override
     protected List<RecruitmentNoticeDto> result() {
-        Scraper<List<RecruitmentNoticeDto>> scraper = new LineNoticesScraper(lineCareersPublicRestClient);
+        Scraper<List<RecruitmentNoticeDto>> scraper = new TossTotalNoticesScraper(tossCareersPublicRestClient);
         List<RecruitmentNoticeDto> scrapResult = new ArrayList<>();
         try {
             scrapResult.addAll(scraper.scrap());
