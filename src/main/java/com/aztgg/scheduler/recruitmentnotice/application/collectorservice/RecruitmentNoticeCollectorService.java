@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.recruitmentnotice.application;
+package com.aztgg.scheduler.recruitmentnotice.application.collectorservice;
 
 import com.aztgg.scheduler.company.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.global.util.HashUtils;
@@ -72,7 +72,7 @@ public abstract class RecruitmentNoticeCollectorService {
 
             // before url이 존재
             if (Objects.nonNull(before)) {
-                recruitmentNotice.updateRecruitmentNoticeIdAndCountAndScrapedAt(before.getRecruitmentNoticeId(),
+                recruitmentNotice.updateRecruitmentNoticeIdAndCountAndScrapedAt(before.getRecruitmentNoticeId(), before.getStandardCategory(),
                         before.getClickCount(), before.getScrapedAt());
             }
         }

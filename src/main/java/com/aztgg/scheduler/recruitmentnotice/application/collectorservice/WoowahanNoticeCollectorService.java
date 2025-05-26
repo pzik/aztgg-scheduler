@@ -1,6 +1,5 @@
-package com.aztgg.scheduler.recruitmentnotice.application;
+package com.aztgg.scheduler.recruitmentnotice.application.collectorservice;
 
-import com.aztgg.scheduler.company.domain.PredefinedCompany;
 import com.aztgg.scheduler.company.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;

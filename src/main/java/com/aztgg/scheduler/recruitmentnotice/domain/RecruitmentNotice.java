@@ -36,6 +36,9 @@ public class RecruitmentNotice {
     @Column("categories")
     private String categories;
 
+    @Column("standardCategory")
+    private String standardCategory;
+
     @Column("url")
     private String url;
 
@@ -58,6 +61,7 @@ public class RecruitmentNotice {
                              String jobOfferTitle,
                              String hash,
                              Set<String> categories,
+                             String standardCategory,
                              Set<String> corporateCodes,
                              String url,
                              int clickCount,
@@ -70,6 +74,7 @@ public class RecruitmentNotice {
         this.jobOfferTitle = jobOfferTitle;
         this.hash = hash;
         this.categories = StringUtils.arrayToCommaDelimitedString(categories.toArray());
+        this.standardCategory = standardCategory;
         this.corporateCodes = StringUtils.arrayToCommaDelimitedString(corporateCodes.toArray());
         this.url = url;
         this.clickCount = clickCount;
@@ -82,10 +87,15 @@ public class RecruitmentNotice {
         }
     }
 
-    public void updateRecruitmentNoticeIdAndCountAndScrapedAt(Long recruitmentNoticeId, int clickCount, LocalDateTime scrapedAt) {
+    public void updateRecruitmentNoticeIdAndCountAndScrapedAt(Long recruitmentNoticeId, String standardCategory, int clickCount, LocalDateTime scrapedAt) {
         this.recruitmentNoticeId = recruitmentNoticeId;
+        this.standardCategory = standardCategory;
         this.clickCount = clickCount;
         this.scrapedAt = scrapedAt;
+    }
+
+    public void updateStandardCategory(String standardCategory) {
+        this.standardCategory = standardCategory;
     }
 
     @Override
@@ -97,6 +107,7 @@ public class RecruitmentNotice {
                 ", jobOfferTitle='" + jobOfferTitle + '\'' +
                 ", hash='" + hash + '\'' +
                 ", categories='" + categories + '\'' +
+                ", standardCategory='" + standardCategory + '\'' +
                 ", corporateCodes='" + corporateCodes + '\'' +
                 ", url='" + url + '\'' +
                 ", clickCount=" + clickCount +
