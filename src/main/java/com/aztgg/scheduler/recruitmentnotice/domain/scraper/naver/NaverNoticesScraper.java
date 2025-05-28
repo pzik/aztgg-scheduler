@@ -59,6 +59,7 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                                 .jobOfferTitle(item.annoSubject)
                                 .url(item.jobDetailLink)
                                 .categories(new HashSet<>(Set.of(item.subJobCdNm)))
+                                .corporateCodes(Collections.singleton(item.sysCompanyCdNm))
                                 .startAt(LocalDateTime.parse(item.staYmdTime, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")))
                                 .endAt(LocalDateTime.parse(item.endYmdTime, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")))
                                 .build();
@@ -101,7 +102,8 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                                String annoSubject, // 공고 제목
                                String staYmdTime, // 채용 시작일
                                String endYmdTime, // 채용 마감일
-                               String subJobCdNm // 카테고리
+                               String subJobCdNm, // 카테고리
+                               String sysCompanyCdNm // 계열사
     ) {
     }
 }
