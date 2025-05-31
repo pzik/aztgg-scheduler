@@ -1,8 +1,10 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.naver;
 
+import com.aztgg.scheduler.company.domain.Corporate;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
@@ -59,7 +62,19 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                                 .jobOfferTitle(item.annoSubject)
                                 .url(item.jobDetailLink)
                                 .categories(new HashSet<>(Set.of(item.subJobCdNm)))
-                                .corporateCodes(Collections.singleton(item.sysCompanyCdNm))
+                                .corporateCodes(
+                                        item.sysCompanyCdNm() == null ? Set.of() :
+                                                item.sysCompanyCdNm().stream()
+                                                        .map(name -> {
+                                                            try {
+                                                                return Corporate.fromId(name).name();
+                                                            } catch (Exception e) {
+                                                                return null;
+                                                            }
+                                                        })
+                                                        .filter(Objects::nonNull)
+                                                        .collect(Collectors.toSet())
+                                )
                                 .startAt(LocalDateTime.parse(item.staYmdTime, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")))
                                 .endAt(LocalDateTime.parse(item.endYmdTime, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")))
                                 .build();
@@ -103,7 +118,8 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                                String staYmdTime, // 채용 시작일
                                String endYmdTime, // 채용 마감일
                                String subJobCdNm, // 카테고리
-                               String sysCompanyCdNm // 계열사
+                               @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                               List<String> sysCompanyCdNm // 계열사
     ) {
     }
 }
