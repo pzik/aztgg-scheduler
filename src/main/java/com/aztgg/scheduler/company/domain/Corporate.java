@@ -88,4 +88,13 @@ public enum Corporate {
         }
         return UNKNOWN;
     }
+
+    public static Corporate fromCode(String code) {
+        for (var value : values()) {
+            if (value.name().equals(code)) {
+                return value;
+            }
+        }
+        return UNKNOWN;
+    }
 }

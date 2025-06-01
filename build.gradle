@@ -36,6 +36,10 @@ dependencies {
 
 	// google gemini
 	implementation 'com.google.genai:google-genai:1.0.0'
+
+	// for Mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 tasks.named('test') {

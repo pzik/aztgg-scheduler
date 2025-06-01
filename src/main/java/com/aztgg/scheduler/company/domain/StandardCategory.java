@@ -28,5 +28,14 @@ public enum StandardCategory {
 
     private final String korean;
     private final String keyword;
+
+    public static StandardCategory fromCode(String code) {
+        for (var value : values()) {
+            if (value.name().equals(code)) {
+                return value;
+            }
+        }
+        return ETC;
+    }
 }
 
