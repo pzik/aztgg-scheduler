@@ -24,7 +24,7 @@ public class RecruitmentNoticeScheduler {
     private final KakaoGreetingNoticeCollectorService kakaoGreetingNoticeCollectorService;
     private final AiCategoryClassifierService aiCategoryClassifierService;
 
-    @Value("${aztgg.donotnotice}")
+    @Value("${aztgg.donotnotice:false}")
     private boolean doNotCollect;
 
     @Scheduled(fixedDelay = 4_3200_000)
