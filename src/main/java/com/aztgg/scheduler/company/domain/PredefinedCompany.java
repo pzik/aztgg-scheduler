@@ -21,4 +21,13 @@ public enum PredefinedCompany {
     ;
 
     private final String korean;
+
+    public static PredefinedCompany fromCode(String code) {
+        for (var value : values()) {
+            if (value.name().equals(code)) {
+                return value;
+            }
+        }
+        return UNKNOWN;
+    }
 }

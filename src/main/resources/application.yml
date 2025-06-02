@@ -4,6 +4,10 @@ spring:
   profiles:
     active: local
 
+logging:
+  level:
+    org.springframework.jdbc.core: DEBUG
+    org.springframework.jdbc.core.StatementCreatorUtils: TRACE
 ---
 spring:
   config:
