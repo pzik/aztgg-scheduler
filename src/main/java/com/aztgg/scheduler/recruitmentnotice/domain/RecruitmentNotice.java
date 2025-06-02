@@ -8,6 +8,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -73,9 +74,9 @@ public class RecruitmentNotice {
         this.scrapGroupCode = scrapGroupCode;
         this.jobOfferTitle = jobOfferTitle;
         this.hash = hash;
-        this.categories = StringUtils.arrayToCommaDelimitedString(categories.toArray());
+        this.categories = Objects.nonNull(categories) ? StringUtils.arrayToCommaDelimitedString(categories.toArray()) : "";
         this.standardCategory = standardCategory;
-        this.corporateCodes = StringUtils.arrayToCommaDelimitedString(corporateCodes.toArray());
+        this.corporateCodes = Objects.nonNull(corporateCodes) ? StringUtils.arrayToCommaDelimitedString(corporateCodes.toArray()) : "";
         this.url = url;
         this.clickCount = clickCount;
         this.scrapedAt = scrapedAt;
