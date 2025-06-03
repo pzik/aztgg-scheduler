@@ -78,7 +78,7 @@ public class KakaoGreetingv11Scraper implements Scraper<List<RecruitmentNoticeDt
 
         List<RecruitmentNoticeDto> result = new ArrayList<>();
         Document doc = getDocument(documentHost);
-        Elements jobCards = doc.select("a[href^=/o]");
+        Elements jobCards = doc.select("a[href~=.*/o/.*]");
 
         for (var card : jobCards) {
             String detailId = card.attr("href");
