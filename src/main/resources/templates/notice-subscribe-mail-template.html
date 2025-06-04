@@ -34,7 +34,9 @@
                     "
                     >
                         🎯
-                        <strong th:text="|${strDate} 맞춤 채용 공고가 도착했어요!|">맞춤 채용 공고가 도착했어요!</strong>
+                        <strong th:text="|${strDate} 맞춤 채용 공고가 도착했어요!|"
+                        >맞춤 채용 공고가 도착했어요!</strong
+                        >
                     </td>
                 </tr>
                 <!-- 키워드 영역 -->
@@ -42,7 +44,11 @@
                     <td style="padding: 16px 24px; font-size: 16px; color: #333">
                         <p>
                             네카라쿠배 채용 공고 모음 서비스에서 구독해주신 키워드
-                            <strong style="color: #007bff" th:text="|${strTags}|"></strong>에 해당하는 새로운 채용 소식을 알려드려요.
+                            <strong
+                                    style="color: #007bff"
+                                    th:text="|${strTags}|"
+                            ></strong
+                            >에 해당하는 새로운 채용 소식을 알려드려요.
                         </p>
                         <p>
                             더 많은 빅테크 채용 공고를 보시려면
@@ -56,18 +62,30 @@
                     </td>
                 </tr>
                 <!-- 채용 리스트 -->
-                <tr th:each="notice : ${mailTemplateNotices}"
-                    th:with="
+                <tr
+                        th:each="notice : ${mailTemplateNotices}"
+                        th:with="
         companyName=${notice.strCorps == null or #strings.isEmpty(notice.strCorps) ? notice.strCompany : notice.strCorps},
         dateRange=${notice.startAt != null or notice.endAt != null ?
                     (notice.startAt != null ? notice.startAt : '') + ' ~ ' + (notice.endAt != null ? notice.endAt : '') : ''}
-    ">
-                    <td style="padding: 16px 0; border-bottom: 1px solid #eee;">
-                        <a th:href="@{'https://api.nklcb.kr/v1/recruitment-notices/' + ${notice.recruitmentNoticeId} + '/redirect'}"
-                           style="font-size: 16px; font-weight: bold; color: #222; text-decoration: none"
-                           th:text="${notice.jobOfferTitle}">채용 제목</a>
-                        <div style="font-size: 14px; color: #666; margin-top: 4px"
-                             th:text="${companyName + ' | ' + notice.strStandardCategory + ' | ' + dateRange}">
+    "
+                >
+                    <td style="padding: 16px; border-bottom: 1px solid #eee">
+                        <a
+                                th:href="@{'https://api.nklcb.kr/v1/recruitment-notices/' + ${notice.recruitmentNoticeId} + '/redirect'}"
+                                style="
+                        font-size: 16px;
+                        font-weight: bold;
+                        color: #222;
+                        text-decoration: none;
+                      "
+                                th:text="${notice.jobOfferTitle}"
+                        >채용 제목</a
+                        >
+                        <div
+                                style="font-size: 14px; color: #666; margin-top: 4px"
+                                th:text="${companyName + ' | ' + notice.strStandardCategory + ' | ' + dateRange}"
+                        >
                             회사 | 직무 | 기간
                         </div>
                     </td>
@@ -88,7 +106,8 @@
                         <a
                                 th:href="@{'https://api.nklcb.kr/v1/subscribe-emails/' + ${email} + '/unsubscribe'}"
                                 style="color: #007bff; text-decoration: none"
-                        >수신 거부</a>
+                        >수신 거부</a
+                        >
                     </td>
                 </tr>
                 </tbody>
