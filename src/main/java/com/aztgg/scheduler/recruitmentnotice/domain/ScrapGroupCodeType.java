@@ -1,5 +1,6 @@
-package com.aztgg.scheduler.company.domain;
+package com.aztgg.scheduler.recruitmentnotice.domain;
 
+import com.aztgg.scheduler.global.asset.PredefinedCompany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

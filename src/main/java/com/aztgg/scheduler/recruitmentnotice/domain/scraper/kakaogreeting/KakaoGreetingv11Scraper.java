@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakaogreeting;
 
-import com.aztgg.scheduler.company.domain.Corporate;
+import com.aztgg.scheduler.global.asset.PredefinedCorporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import org.jsoup.Jsoup;
@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 public class KakaoGreetingv11Scraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private final RestClient baseRestClient;
-    private final Set<Corporate> kakaoGreetingCorp = Set.of(Corporate.KAKAO_MOBILITY,
-            Corporate.KAKAO_PAY, Corporate.KAKAO_ENTERPRISE, Corporate.KAKAO_GAMES);
+    private final Set<PredefinedCorporate> kakaoGreetingCorp = Set.of(PredefinedCorporate.KAKAO_MOBILITY,
+            PredefinedCorporate.KAKAO_PAY, PredefinedCorporate.KAKAO_ENTERPRISE, PredefinedCorporate.KAKAO_GAMES);
 
     public KakaoGreetingv11Scraper(RestClient baseRestClient) {
         this.baseRestClient = baseRestClient;
@@ -37,19 +37,19 @@ public class KakaoGreetingv11Scraper implements Scraper<List<RecruitmentNoticeDt
             String documentHost;
             String detailBaseUrl;
             String positionApi;
-            if (corp.equals(Corporate.KAKAO_MOBILITY)) {
+            if (corp.equals(PredefinedCorporate.KAKAO_MOBILITY)) {
                 documentHost = "https://kakaomobility.career.greetinghr.com/guide";
                 detailBaseUrl = "https://kakaomobility.career.greetinghr.com";
                 positionApi = "https://api.greetinghr.com/ats/v1.1/career/workspaces/14346/job-positions/filter";
-            } else if (corp.equals(Corporate.KAKAO_PAY)) {
+            } else if (corp.equals(PredefinedCorporate.KAKAO_PAY)) {
                 documentHost = "https://kakaopay.career.greetinghr.com/main";
                 detailBaseUrl = "https://kakaopay.career.greetinghr.com";
                 positionApi = "https://api.greetinghr.com/ats/v1.1/career/workspaces/9737/job-positions/filter";
-            } else if (corp.equals(Corporate.KAKAO_ENTERPRISE)) {
+            } else if (corp.equals(PredefinedCorporate.KAKAO_ENTERPRISE)) {
                 documentHost = "https://careers.kakaoent.com/job";
                 detailBaseUrl = "https://careers.kakaoent.com";
                 positionApi = "https://api.greetinghr.com/ats/v1.1/career/workspaces/5191/job-positions/filter";
-            } else if (corp.equals(Corporate.KAKAO_GAMES)) {
+            } else if (corp.equals(PredefinedCorporate.KAKAO_GAMES)) {
                 documentHost = "https://recruit.kakaogames.com/joinjuskr";
                 detailBaseUrl = "https://recruit.kakaogames.com/";
                 positionApi = "https://api.greetinghr.com/ats/v1.1/career/workspaces/7144/job-positions/filter";
@@ -66,7 +66,7 @@ public class KakaoGreetingv11Scraper implements Scraper<List<RecruitmentNoticeDt
         return jobListResponseAll;
     }
 
-    private List<RecruitmentNoticeDto> getNotices(Corporate corp, String documentHost, String detailBaseUrl, String positionApi) throws IOException {
+    private List<RecruitmentNoticeDto> getNotices(PredefinedCorporate corp, String documentHost, String detailBaseUrl, String positionApi) throws IOException {
         // api 통해 직군 추출
         ApiResponseDto occupationRes = baseRestClient.get()
                 .uri(positionApi)

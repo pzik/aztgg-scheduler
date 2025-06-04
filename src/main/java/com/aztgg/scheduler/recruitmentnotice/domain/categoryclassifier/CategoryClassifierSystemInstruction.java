@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.categoryclassifier;
 
-import com.aztgg.scheduler.company.domain.StandardCategory;
+import com.aztgg.scheduler.global.asset.PredefinedStandardCategory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
@@ -9,9 +9,9 @@ import java.util.List;
 public class CategoryClassifierSystemInstruction {
 
     private final ObjectMapper objectMapper;
-    private final StandardCategory[] standardCategories;
+    private final PredefinedStandardCategory[] standardCategories;
 
-    public CategoryClassifierSystemInstruction(ObjectMapper objectMapper, StandardCategory[] standardCategories) {
+    public CategoryClassifierSystemInstruction(ObjectMapper objectMapper, PredefinedStandardCategory[] standardCategories) {
         this.objectMapper = objectMapper;
         this.standardCategories = standardCategories;
     }

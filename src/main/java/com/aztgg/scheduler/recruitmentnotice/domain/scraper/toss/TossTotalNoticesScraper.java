@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.toss;
 
-import com.aztgg.scheduler.company.domain.Corporate;
+import com.aztgg.scheduler.global.asset.PredefinedCorporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -57,8 +57,8 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                                 .map(Optional::get)
                                 .filter(a -> Objects.nonNull(a.value()))
                                 .map(a -> String.valueOf(a.value()))
-                                .map(Corporate::fromId)
-                                .map(Corporate::name)
+                                .map(PredefinedCorporate::fromId)
+                                .map(PredefinedCorporate::name)
                                 .collect(Collectors.toSet());
                     }
 

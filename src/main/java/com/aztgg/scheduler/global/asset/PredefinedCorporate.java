@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.company.domain;
+package com.aztgg.scheduler.global.asset;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum Corporate {
+public enum PredefinedCorporate {
 
     UNKNOWN("UNKNOWN", PredefinedCompany.UNKNOWN, "알수없음"),
 
@@ -80,7 +80,7 @@ public enum Corporate {
     private final PredefinedCompany parent; // 모회사
     private final String korean;
 
-    public static Corporate fromId(String id) {
+    public static PredefinedCorporate fromId(String id) {
         for (var value : values()) {
             if (value.id.equals(id)) {
                 return value;
@@ -89,7 +89,7 @@ public enum Corporate {
         return UNKNOWN;
     }
 
-    public static Corporate fromCode(String code) {
+    public static PredefinedCorporate fromCode(String code) {
         for (var value : values()) {
             if (value.name().equals(code)) {
                 return value;

@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.naver;
 
-import com.aztgg.scheduler.company.domain.Corporate;
+import com.aztgg.scheduler.global.asset.PredefinedCorporate;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
@@ -67,7 +67,7 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                                                 item.sysCompanyCdNm().stream()
                                                         .map(name -> {
                                                             try {
-                                                                return Corporate.fromId(name).name();
+                                                                return PredefinedCorporate.fromId(name).name();
                                                             } catch (Exception e) {
                                                                 return null;
                                                             }

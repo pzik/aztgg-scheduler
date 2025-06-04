@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.application;
 
-import com.aztgg.scheduler.company.domain.StandardCategory;
+import com.aztgg.scheduler.global.asset.PredefinedStandardCategory;
 import com.aztgg.scheduler.recruitmentnotice.application.dto.CategoryClassifyRequestDto;
 import com.aztgg.scheduler.recruitmentnotice.application.dto.CategoryClassifyResponseDto;
 import com.aztgg.scheduler.recruitmentnotice.domain.categoryclassifier.CategoryClassifierSystemInstruction;
@@ -43,7 +43,7 @@ public class AiCategoryClassifierService {
         log.info("new recruitmentNotice found " + recruitmentNotices.size() + ", classifying category start");
 
         // Sets the system instruction in the config.
-        CategoryClassifierSystemInstruction categoryClassifierSystemInstruction = new CategoryClassifierSystemInstruction(objectMapper, StandardCategory.values());
+        CategoryClassifierSystemInstruction categoryClassifierSystemInstruction = new CategoryClassifierSystemInstruction(objectMapper, PredefinedStandardCategory.values());
         Content systemInstruction = Content.fromParts(Part.fromText(categoryClassifierSystemInstruction.print()));
 
         GenerateContentConfig config = GenerateContentConfig.builder()

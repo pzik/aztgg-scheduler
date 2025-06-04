@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.line;
 
-import com.aztgg.scheduler.company.domain.Corporate;
+import com.aztgg.scheduler.global.asset.PredefinedCorporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -61,7 +61,7 @@ public class LineNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
                     Set<String> corporates = new HashSet<>();
                     if (Objects.nonNull(node.companies())) {
                         corporates = node.companies().stream()
-                                .map(a -> Corporate.fromId(a.name()))
+                                .map(a -> PredefinedCorporate.fromId(a.name()))
                                 .map(Enum::name)
                                 .collect(Collectors.toSet());
                     }

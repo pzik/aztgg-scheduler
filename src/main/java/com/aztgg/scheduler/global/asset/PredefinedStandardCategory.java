@@ -1,11 +1,11 @@
-package com.aztgg.scheduler.company.domain;
+package com.aztgg.scheduler.global.asset;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum StandardCategory {
+public enum PredefinedStandardCategory {
 
     ETC("ETC", null),
     BACKEND("백엔드", "BE, Backend, 백엔드 개발, 백엔드 엔지니어, 데이터 엔지니어, 서버 개발, 데이터 엔지니어, Spring, Express, nestjs"),
@@ -29,7 +29,7 @@ public enum StandardCategory {
     private final String korean;
     private final String keyword;
 
-    public static StandardCategory fromCode(String code) {
+    public static PredefinedStandardCategory fromCode(String code) {
         for (var value : values()) {
             if (value.name().equals(code)) {
                 return value;

@@ -1,8 +1,8 @@
 package com.aztgg.scheduler.subscribeemail.application;
 
-import com.aztgg.scheduler.company.domain.Corporate;
-import com.aztgg.scheduler.company.domain.PredefinedCompany;
-import com.aztgg.scheduler.company.domain.StandardCategory;
+import com.aztgg.scheduler.global.asset.PredefinedCorporate;
+import com.aztgg.scheduler.global.asset.PredefinedCompany;
+import com.aztgg.scheduler.global.asset.PredefinedStandardCategory;
 import com.aztgg.scheduler.recruitmentnotice.application.RecruitmentNoticeService;
 import com.aztgg.scheduler.recruitmentnotice.application.dto.RecruitmentNoticeResponseDto;
 import com.aztgg.scheduler.subscribeemail.application.dto.MailTemplateNoticeDto;
@@ -25,13 +25,13 @@ public class SubscribeEmailFacadeService {
         List<MailTemplateNoticeDto> mailTemplateNotices = recruitmentNoticeResponses.stream()
                 .map(a -> {
                     String strCorps = a.corporateCodes().stream()
-                            .map(Corporate::fromCode)
-                            .map(Corporate::getKorean)
+                            .map(PredefinedCorporate::fromCode)
+                            .map(PredefinedCorporate::getKorean)
                             .collect(Collectors.joining(", "));
 
                     return new MailTemplateNoticeDto(a.recruitmentNoticeId(), strCorps, a.jobOfferTitle(),
                             a.companyCode(), PredefinedCompany.fromCode(a.companyCode()).getKorean(),
-                            a.standardCategory(), StandardCategory.fromCode(a.standardCategory()).getKorean(),
+                            a.standardCategory(), PredefinedStandardCategory.fromCode(a.standardCategory()).getKorean(),
                             a.startAt(), a.endAt(), a.scrapedAt());
                 })
                 .toList();

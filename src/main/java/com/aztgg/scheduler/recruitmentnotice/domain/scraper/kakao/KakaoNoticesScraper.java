@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakao;
 
-import com.aztgg.scheduler.company.domain.Corporate;
+import com.aztgg.scheduler.global.asset.PredefinedCorporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import org.springframework.web.client.RestClient;
@@ -83,7 +83,7 @@ public class KakaoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                             .jobOfferTitle(item.jobOfferTitle)
                             .url(JOB_DETAIL_URL + "/" + item.realId)
                             .categories(categories)
-                            .corporateCodes(Set.of(Corporate.KAKAO.name()))
+                            .corporateCodes(Set.of(PredefinedCorporate.KAKAO.name()))
                             .startAt(item.regDate)
                             .endAt(item.endDate)
                             .build();

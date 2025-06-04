@@ -1,6 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.daangn;
 
-import com.aztgg.scheduler.company.domain.Corporate;
+import com.aztgg.scheduler.global.asset.PredefinedCorporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import org.springframework.web.client.RestClient;
@@ -39,7 +39,7 @@ public class DaangnNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
                     Set<String> categories = node.departments().stream()
                             .map(a -> depMap.get(a.id()))
                             .collect(Collectors.toSet());
-                    Set<String> corporateCodes = Set.of(Corporate.fromId(node.corporate()).name());
+                    Set<String> corporateCodes = Set.of(PredefinedCorporate.fromId(node.corporate()).name());
 
                     return RecruitmentNoticeDto.builder()
                             .jobOfferTitle(node.title())

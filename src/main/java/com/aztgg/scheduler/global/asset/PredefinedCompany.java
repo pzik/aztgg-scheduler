@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.company.domain;
+package com.aztgg.scheduler.global.asset;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
