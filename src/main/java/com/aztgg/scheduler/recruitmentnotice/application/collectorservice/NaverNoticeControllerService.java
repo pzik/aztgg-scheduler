@@ -1,5 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.application.collectorservice;
 
+import com.aztgg.scheduler.recruitmentnotice.application.RecruitmentNoticeCollectorService;
 import com.aztgg.scheduler.recruitmentnotice.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class NaverNoticeControllerService extends RecruitmentNoticeCollectorService{
+public class NaverNoticeControllerService extends RecruitmentNoticeCollectorService {
     private final RestClient naverCareersPublicRestClient;
 
     public NaverNoticeControllerService(RecruitmentNoticeRepository recruitmentNoticeRepository,

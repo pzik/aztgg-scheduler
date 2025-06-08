@@ -1,5 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.application.collectorservice;
 
+import com.aztgg.scheduler.recruitmentnotice.application.RecruitmentNoticeCollectorService;
 import com.aztgg.scheduler.recruitmentnotice.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class CoupangNoticeControllerService extends RecruitmentNoticeCollectorService{
+public class CoupangNoticeControllerService extends RecruitmentNoticeCollectorService {
 
     public CoupangNoticeControllerService(RecruitmentNoticeRepository recruitmentNoticeRepository,
                                           ApplicationEventPublisher applicationEventPublisher) {

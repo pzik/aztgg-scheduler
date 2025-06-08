@@ -4,7 +4,6 @@ import com.aztgg.scheduler.global.asset.PredefinedCorporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
@@ -45,31 +44,36 @@ public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
         for (var jobCategory : jobCategories.entrySet()) {
             Map<String, Object> requestBody = Map.of(
                     "page", "1",
-                    "size", "9999",
+                    "size", "9000",
                     "jobCategories", Set.of(jobCategory.getKey()));
 
-            NexonCareersApiResponseDto responseDto = nexonCareersPublicRestClient.post()
-                    .uri("/career/v1/open/job-posts")
+            try {
+                NexonCareersApiResponseDto responseDto = nexonCareersPublicRestClient.post()
+                        .uri("/career/v1/open/job-posts")
 //                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(requestBody)
-                    .retrieve()
-                    .body(NexonCareersApiResponseDto.class);
+                        .body(requestBody)
+                        .retrieve()
+                        .body(NexonCareersApiResponseDto.class);
 
-            responseDto.list()
-                    .forEach(item -> {
-                        String url = String.format(DETAIL_URL, item.jobPostNo());
-                        LocalDate localDate = LocalDate.parse(item.startDate(), formatter);
-                        var startFormat = localDate.atStartOfDay(ZoneId.of("Asia/Seoul"));
+                responseDto.list()
+                        .forEach(item -> {
+                            String url = String.format(DETAIL_URL, item.jobPostNo());
+                            LocalDate localDate = LocalDate.parse(item.startDate(), formatter);
+                            var startFormat = localDate.atStartOfDay(ZoneId.of("Asia/Seoul"));
 
-                        String corp = PredefinedCorporate.fromId(item.corpName()).name();
-                        result.add(RecruitmentNoticeDto.builder()
-                                .url(url)
-                                .jobOfferTitle(item.title())
-                                .corporateCodes(Set.of(corp))
-                                .categories(Set.of(jobCategory.getValue()))
-                                .startAt(LocalDateTime.ofInstant(startFormat.toInstant(), ZoneOffset.UTC))
-                                .build());
-                    });
+                            String corp = PredefinedCorporate.fromId(item.corpName()).name();
+                            result.add(RecruitmentNoticeDto.builder()
+                                    .url(url)
+                                    .jobOfferTitle(item.title())
+                                    .corporateCodes(Set.of(corp))
+                                    .categories(Set.of(jobCategory.getValue()))
+                                    .startAt(LocalDateTime.ofInstant(startFormat.toInstant(), ZoneOffset.UTC))
+                                    .build());
+                        });
+            } catch (Exception e) {
+                // 한번이라도 실패하면 빈 배열 반환해서 diff check 일어나지 않게끔
+                return new ArrayList<>();
+            }
 
             try {
                 Thread.sleep(2000);

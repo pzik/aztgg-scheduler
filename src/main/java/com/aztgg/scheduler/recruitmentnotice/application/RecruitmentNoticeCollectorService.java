@@ -1,4 +1,4 @@
-package com.aztgg.scheduler.recruitmentnotice.application.collectorservice;
+package com.aztgg.scheduler.recruitmentnotice.application;
 
 import com.aztgg.scheduler.recruitmentnotice.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.global.util.HashUtils;
@@ -6,6 +6,7 @@ import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNotice;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +36,11 @@ public abstract class RecruitmentNoticeCollectorService {
         long startTime = System.currentTimeMillis();
 
         List<RecruitmentNoticeDto> scrapResult = this.result();
+        if (CollectionUtils.isEmpty(scrapResult)) {
+            log.warn("scrapResult is empty, diff check skipped");
+            return;
+        }
+
         List<RecruitmentNotice> beforeRecruitmentNotices = recruitmentNoticeRepository.findByScrapGroupCode(scrapGroupCodeType.name());
         List<RecruitmentNotice> afterRecruitmentNotices = scrapResult.stream()
                 .map(item -> RecruitmentNotice.builder()
