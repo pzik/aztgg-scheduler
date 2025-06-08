@@ -20,6 +20,8 @@ public enum ScrapGroupCodeType {
     LINE(PredefinedCompany.LINE),
     DAANGN(PredefinedCompany.DAANGN),
     COUPANG(PredefinedCompany.COUPANG),
+    NEXON(PredefinedCompany.NEXON),
+    KRAFTON(PredefinedCompany.KRAFTON),
     ;
 
     private final PredefinedCompany company;
