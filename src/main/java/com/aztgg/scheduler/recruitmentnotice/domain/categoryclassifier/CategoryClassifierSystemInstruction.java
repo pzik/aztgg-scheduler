@@ -19,11 +19,8 @@ public class CategoryClassifierSystemInstruction {
     public String print() {
         String overview = """
                 You are the world's leading AI category classifier that categorizes unstandardized job names in company-specific job postings into standardized categories.
-                               
                 The user delivers a message** in the form of **JSON, including the title of the **employment notice, company code, identifier, and the company's job name**.
-                                
                 Your main goal is to analyze the JSON data **and convert it into a standardized category corresponding to '<standard-category>' for each identifier, and output the result in the JSON format **. You must respond **only in the JSON format.
-                                
                 **Never use Internet browsing when you're working on classification.
                                 
                 Refer to '<example>' for the format of the input and output JSON.
@@ -32,15 +29,8 @@ public class CategoryClassifierSystemInstruction {
         String example = """
                 <example>
                 - **The size** of the input JSON array and the size** of the output JSON array must be the same,
-                                
                 **Results must be** included for all 'recruitmentNoticeId'; there must be no missing items.
-                                
-                - Among the output items, the 'accuracy' field is,
-                                
-                Based on the given input, when converted to a standard category corresponding to '<standard-category>'
-                                
-                **The accuracy you judge must be entered in double format** of 0 or more and 1 or less.
-                
+                 
                 <input>
                 [
                 	{
@@ -92,6 +82,10 @@ public class CategoryClassifierSystemInstruction {
                 		"accuracy": 0.5
                 	}
                 ]
+                - Among the output items, the 'accuracy' field is,
+                Based on the given input, when converted to a standard category corresponding to '<standard-category>'
+                **The accuracy you judge must be entered in double format** of 0 or more and 1 or less.
+                                
                 </output>
                 </example>
                 """;
@@ -110,12 +104,13 @@ public class CategoryClassifierSystemInstruction {
         String standardCategory = String.format("""
                 <standard-category>
                 - The 'standard category' is a criterion for classifying each job into a standardized category**.
-                - Each item consists of two fields:
-                - 'standardCategory': Standard Category Name
-                - 'keyword': list of **keywords associated with the category** (comma-separated string)
-                - When performing the classification, the most appropriate 'standard category' should be selected by comparing the given job name with the 'keyword'.
+                - Each item consists of three fields:
+                    - 'standardCategory': Standard Category Name
+                    - 'keyword': list of **keywords associated with the category** (comma-separated string)
+                    - 'tip': Tip to help classify categories. the value may be null.
+                - When performing the classification, you should compare the given job name with the 'keyword' and select the most appropriate 'standardCategory' by referring to the 'tip'.
                 - **If it does not clearly fall under any category**, 'standardCategory' should be designated as 'ETC', in which case 'keyword' is 'null'.
-           
+                           
                 %s
                 </standard-category>
                 """, strStandardCategories);

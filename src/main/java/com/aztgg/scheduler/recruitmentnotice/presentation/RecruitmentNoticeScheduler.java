@@ -22,6 +22,9 @@ public class RecruitmentNoticeScheduler {
     private final NaverNoticeControllerService naverNoticeControllerService;
     private final CoupangNoticeControllerService coupangNoticeControllerService;
     private final KakaoGreetingNoticeCollectorService kakaoGreetingNoticeCollectorService;
+    private final NexonNoticesCollectorService nexonNoticesCollectorService;
+    private final KraftonNoticesCollectorService kraftonNoticesCollectorService;
+
     private final AiCategoryClassifierService aiCategoryClassifierService;
 
     @Value("${aztgg.donotnotice:false}")
@@ -114,6 +117,26 @@ public class RecruitmentNoticeScheduler {
             return;
         }
         coupangNoticeControllerService.collect();
+        aiCategoryClassifierService.classifyingNoticeCategories();
+    }
+
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectNexonTotalNotices() {
+        if (doNotCollect) {
+            log.debug("aztgg.donotnotice = true");
+            return;
+        }
+        nexonNoticesCollectorService.collect();
+        aiCategoryClassifierService.classifyingNoticeCategories();
+    }
+
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectKraftonTotalNotices() {
+        if (doNotCollect) {
+            log.debug("aztgg.donotnotice = true");
+            return;
+        }
+        kraftonNoticesCollectorService.collect();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 }
