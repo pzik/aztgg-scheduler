@@ -72,6 +72,7 @@ public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                         });
             } catch (Exception e) {
                 // 한번이라도 실패하면 빈 배열 반환해서 diff check 일어나지 않게끔
+                log.error("internal error", e);
                 return new ArrayList<>();
             }
 
