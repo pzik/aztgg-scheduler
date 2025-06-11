@@ -7,8 +7,9 @@ import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.nexon.NexonNoticesScraper;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.WebDriver;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,17 +18,17 @@ import java.util.List;
 @Service
 public class NexonNoticesCollectorService extends RecruitmentNoticeCollectorService {
 
-    private final RestClient nexonCareersPublicRestClient;
+    private final WebDriver nexonWebDriver;
 
     public NexonNoticesCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
-                                        RestClient nexonCareersPublicRestClient) {
+                                        @Qualifier("nexonWebDriver") WebDriver nexonWebDriver) {
         super(recruitmentNoticeRepository, ScrapGroupCodeType.NEXON);
-        this.nexonCareersPublicRestClient = nexonCareersPublicRestClient;
+        this.nexonWebDriver = nexonWebDriver;
     }
 
     @Override
     protected List<RecruitmentNoticeDto> result() {
-        Scraper<List<RecruitmentNoticeDto>> scraper = new NexonNoticesScraper(nexonCareersPublicRestClient);
+        Scraper<List<RecruitmentNoticeDto>> scraper = new NexonNoticesScraper(nexonWebDriver);
         List<RecruitmentNoticeDto> scrapResult = new ArrayList<>();
         try {
             scrapResult.addAll(scraper.scrap());

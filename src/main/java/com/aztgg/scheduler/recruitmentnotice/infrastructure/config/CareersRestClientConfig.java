@@ -79,13 +79,4 @@ public class CareersRestClientConfig {
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
-
-    @Bean(name = "nexonCareersPublicRestClient")
-    public RestClient nexonCareersPublicRestClient() {
-        return RestClient.builder()
-                .baseUrl("https://career-gateway.nexon.com")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
 }
