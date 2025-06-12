@@ -122,10 +122,10 @@ public class RecruitmentNoticeScheduler {
 
     @Scheduled(fixedDelay = 4_3200_000)
     public void collectNexonTotalNotices() {
-        if (doNotCollect) {
-            log.debug("aztgg.donotnotice = true");
-            return;
-        }
+//        if (doNotCollect) {
+//            log.debug("aztgg.donotnotice = true");
+//            return;
+//        }
         nexonNoticesCollectorService.collect();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }

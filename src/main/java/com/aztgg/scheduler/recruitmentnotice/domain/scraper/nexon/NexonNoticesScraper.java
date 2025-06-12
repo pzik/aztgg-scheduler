@@ -50,8 +50,8 @@ public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
             try {
                 NexonCareersApiResponseDto responseDto = nexonCareersPublicRestClient.post()
                         .uri("/career/v1/open/job-posts")
-//                    .contentType(MediaType.APPLICATION_JSON)
                         .body(requestBody)
+                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
                         .retrieve()
                         .body(NexonCareersApiResponseDto.class);
 
