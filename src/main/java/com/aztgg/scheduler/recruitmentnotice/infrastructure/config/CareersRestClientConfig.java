@@ -79,4 +79,22 @@ public class CareersRestClientConfig {
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
+
+    @Bean(name = "molocoCareersPublicRestClient")
+    public RestClient molocoCareersPublicRestClient() {
+        return RestClient.builder()
+                .baseUrl("https://boards-api.greenhouse.io/v1/boards/moloco")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
+
+    @Bean(name = "sendbirdCareersPublicRestClient")
+    public RestClient sendbirdCareersPublicRestClient() {
+        return RestClient.builder()
+                .baseUrl("https://boards-api.greenhouse.io/v1/boards/sendbird")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
 }

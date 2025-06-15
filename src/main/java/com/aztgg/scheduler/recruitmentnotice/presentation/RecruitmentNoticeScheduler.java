@@ -19,11 +19,14 @@ public class RecruitmentNoticeScheduler {
     private final LineNoticeCollectorService lineNoticeCollectorService;
     private final DaangnNoticeCollectorService daangnNoticeCollectorService;
     private final KakaoBankNoticeCollectorService kakaoBankNoticeCollectorService;
-    private final NaverNoticeControllerService naverNoticeControllerService;
-    private final CoupangNoticeControllerService coupangNoticeControllerService;
+    private final NaverNoticeCollectorService naverNoticeCollectorService;
+    private final CoupangNoticeCollectorService coupangNoticeCollectorService;
     private final KakaoGreetingNoticeCollectorService kakaoGreetingNoticeCollectorService;
     private final NexonNoticesCollectorService nexonNoticesCollectorService;
     private final KraftonNoticesCollectorService kraftonNoticesCollectorService;
+    private final MolocoNoticeCollectorService molocoNoticeCollectorService;
+    private final DunamuNoticeCollectorService dunamuNoticeCollectorService;
+    private final SendbirdNoticeCollectorService sendbirdNoticeCollectorService;
 
     private final AiCategoryClassifierService aiCategoryClassifierService;
 
@@ -106,7 +109,7 @@ public class RecruitmentNoticeScheduler {
             log.debug("aztgg.donotnotice = true");
             return;
         }
-        naverNoticeControllerService.collect();
+        naverNoticeCollectorService.collect();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -116,7 +119,7 @@ public class RecruitmentNoticeScheduler {
             log.debug("aztgg.donotnotice = true");
             return;
         }
-        coupangNoticeControllerService.collect();
+        coupangNoticeCollectorService.collect();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -137,6 +140,36 @@ public class RecruitmentNoticeScheduler {
             return;
         }
         kraftonNoticesCollectorService.collect();
+        aiCategoryClassifierService.classifyingNoticeCategories();
+    }
+
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectMolocoTotalNotices() {
+        if (doNotCollect) {
+            log.debug("aztgg.donotnotice = true");
+            return;
+        }
+        molocoNoticeCollectorService.collect();
+        aiCategoryClassifierService.classifyingNoticeCategories();
+    }
+
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectDunamuTotalNotices() {
+        if (doNotCollect) {
+            log.debug("aztgg.donotnotice = true");
+            return;
+        }
+        dunamuNoticeCollectorService.collect();
+        aiCategoryClassifierService.classifyingNoticeCategories();
+    }
+
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectSendbirdTotalNotices() {
+        if (doNotCollect) {
+            log.debug("aztgg.donotnotice = true");
+            return;
+        }
+        sendbirdNoticeCollectorService.collect();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 }

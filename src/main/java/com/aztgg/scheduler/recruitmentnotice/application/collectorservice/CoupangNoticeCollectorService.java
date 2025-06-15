@@ -15,9 +15,9 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class CoupangNoticeControllerService extends RecruitmentNoticeCollectorService {
+public class CoupangNoticeCollectorService extends RecruitmentNoticeCollectorService {
 
-    public CoupangNoticeControllerService(RecruitmentNoticeRepository recruitmentNoticeRepository,
+    public CoupangNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
                                           ApplicationEventPublisher applicationEventPublisher) {
         super(recruitmentNoticeRepository, ScrapGroupCodeType.COUPANG);
     }
