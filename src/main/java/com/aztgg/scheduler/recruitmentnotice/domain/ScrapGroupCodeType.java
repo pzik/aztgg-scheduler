@@ -22,6 +22,9 @@ public enum ScrapGroupCodeType {
     COUPANG(PredefinedCompany.COUPANG),
     NEXON(PredefinedCompany.NEXON),
     KRAFTON(PredefinedCompany.KRAFTON),
+    MOLOCO(PredefinedCompany.MOLOCO),
+    DUNAMU(PredefinedCompany.DUNAMU),
+    SENDBIRD(PredefinedCompany.SENDBIRD),
     ;
 
     private final PredefinedCompany company;

@@ -16,10 +16,10 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class NaverNoticeControllerService extends RecruitmentNoticeCollectorService {
+public class NaverNoticeCollectorService extends RecruitmentNoticeCollectorService {
     private final RestClient naverCareersPublicRestClient;
 
-    public NaverNoticeControllerService(RecruitmentNoticeRepository recruitmentNoticeRepository,
+    public NaverNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
                                         RestClient naverCareersPublicRestClient) {
         super(recruitmentNoticeRepository, ScrapGroupCodeType.NAVER);
         this.naverCareersPublicRestClient = naverCareersPublicRestClient;
