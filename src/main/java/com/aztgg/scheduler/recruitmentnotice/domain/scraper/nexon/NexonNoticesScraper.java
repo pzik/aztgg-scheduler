@@ -8,9 +8,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +24,6 @@ import java.util.concurrent.*;
 @Slf4j
 public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
-    private final WebDriver webDriver;
     private static final String MAIN_URL = "https://careers.nexon.com/recruit";
     private static final Map<String, String> jobCategories = Map.of(
             "6", "Game Programming",
@@ -36,22 +38,19 @@ public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
             "10", "Etc"
     );
 
-    public NexonNoticesScraper(WebDriver webDriver) {
-        this.webDriver = webDriver;
-    }
-
     @Override
     public List<RecruitmentNoticeDto> scrap() throws IOException {
         List<RecruitmentNoticeDto> result = new ArrayList<>();
         Future<List<RecruitmentNoticeDto>> future = null;
         ExecutorService executor = Executors.newSingleThreadExecutor();
-
+        WebDriver webDriver = null;
         try {
+            final WebDriver finalWebDriver = webDriver = createWebDriver();
             for (var job : jobCategories.entrySet()) {
                 webDriver.get(MAIN_URL + "?jobCategories=" + job.getKey());
                 Thread.sleep(4000);
 
-                future = executor.submit(() -> scrapJobCategory(webDriver, job.getValue()));
+                future = executor.submit(() -> scrapJobCategory(finalWebDriver, job.getValue()));
 
                 // 한 잡 카테고리 스크랩 당 타임아웃 시간 ⏰ 300초 제한
                 List<RecruitmentNoticeDto> notices = future.get(300, TimeUnit.SECONDS);
@@ -64,7 +63,9 @@ public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
             }
             return new ArrayList<>(); // 한번이라도 실패하면 return empty
         } finally {
-            webDriver.quit();
+            if (webDriver != null) {
+                webDriver.quit();
+            }
         }
 
         // graceful shutdown
@@ -80,6 +81,21 @@ public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
             Thread.currentThread().interrupt();
         }
         return result;
+    }
+
+    private WebDriver createWebDriver() {
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--lang=ko");
+        chromeOptions.addArguments("--no-sandbox");
+        chromeOptions.addArguments("--disable-dev-shm-usage");
+        chromeOptions.addArguments("--disable-gpu");
+
+        chromeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36");
+
+        WebDriver driver = new ChromeDriver(chromeOptions);
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+        return driver;
     }
 
     private List<RecruitmentNoticeDto> scrapJobCategory(WebDriver webDriver, String jobValue) throws InterruptedException {
