@@ -1,6 +1,7 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.naver;
 
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
@@ -8,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
@@ -17,7 +17,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private final RestClient naverCareersPublicRestClient;
@@ -94,7 +93,7 @@ public class NaverNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {
-                log.error("unexpected exception", e);
+                AppLogger.errorLog("unexpected exception", e);
                 throw new IllegalStateException();
             }
 

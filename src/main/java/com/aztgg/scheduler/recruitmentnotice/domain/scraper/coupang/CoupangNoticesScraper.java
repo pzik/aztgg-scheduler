@@ -1,8 +1,8 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.coupang;
 
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
-import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 public class CoupangNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     /**
@@ -47,7 +46,7 @@ public class CoupangNoticesScraper implements Scraper<List<RecruitmentNoticeDto>
                 try {
                     Thread.sleep(300);
                 } catch (Exception e) {
-                    log.error("unexpected exception", e);
+                    AppLogger.errorLog("unexpected exception", e);
                     throw new IllegalStateException();
                 }
                 String updateTime = anno.selectFirst("time[datetime]").attr("datetime");
@@ -66,7 +65,7 @@ public class CoupangNoticesScraper implements Scraper<List<RecruitmentNoticeDto>
             try {
                 Thread.sleep(600);
             } catch (Exception e) {
-                log.error("unexpected exception", e);
+                AppLogger.errorLog("unexpected exception", e);
                 throw new IllegalStateException();
             }
         }

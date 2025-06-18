@@ -38,3 +38,6 @@ out/
 
 ### 리소스 내 비밀키
 secrets/
+
+### logging
+logs/

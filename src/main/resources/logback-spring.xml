@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 시스템 프로퍼티에서 logging.file.path 값을 읽고 기본값 지정 -->
+    <property name="LOG_PATH" value="${logging.file.path:-./logs}"/>
+
+    <!-- 공통 패턴 -->
+    <property name="LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{36} - %msg%n"/>
+
+    <!-- appender(어디에 출력할 지)에서 콘솔에 출력되는 형식을 지정한다. -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- system.log appender -->
+    <appender name="SYSTEM_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/system.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/system.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern> <!-- 해당 패턴 네이밍으로 이전 파일이 기록됨 -->
+            <maxFileSize>100MB</maxFileSize> <!-- 한 파일의 최대 용량 -->
+            <maxHistory>60</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
+            <totalSizeCap>1GB</totalSizeCap> <!-- 전체 로그파일 크기 제한, 1기가 넘으면 오래된거 삭제 -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- SYSTEM_LOG 로거 설정 -->
+    <logger name="SYSTEM_LOG" level="INFO" additivity="false">
+        <appender-ref ref="SYSTEM_LOG"/>
+    </logger>
+
+    <!-- 루트로거 구성, 루트로그의 기본 수준을 INFO로 지정 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="SYSTEM_LOG"/>
+    </root>
+</configuration>

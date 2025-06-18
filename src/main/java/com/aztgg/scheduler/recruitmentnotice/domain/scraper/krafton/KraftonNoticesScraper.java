@@ -1,9 +1,9 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.krafton;
 
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
-import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Slf4j
 public class KraftonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private static final String DOC_HOST = "https://www.krafton.com/careers/jobs/?search_list_cnt=999&search_office=Pangyo,Seoul,Remote";
@@ -72,7 +71,7 @@ public class KraftonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>
             String href = link.attr("href");
             detailUrl += href;
         } else {
-            log.error("krafon, invalid detail url format");
+            AppLogger.warnLog("krafon, invalid detail url format");
         }
         return detailUrl;
     }
@@ -85,10 +84,10 @@ public class KraftonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>
             if (firstSpan != null) {
                 title = firstSpan.text();
             } else {
-                log.error("krafon, invalid title format");
+                AppLogger.warnLog("krafon, invalid title format");
             }
         } else {
-            log.error("krafon, invalid title format");
+            AppLogger.warnLog("krafon, invalid title format");
         }
         return title;
     }
@@ -99,7 +98,7 @@ public class KraftonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>
         if (studioSpan != null) {
             corpId = studioSpan.attr("data-str");
         } else {
-            log.error("krafon, invalid corp format");
+            AppLogger.warnLog("krafon, invalid corp format");
         }
         return corpId;
     }
@@ -110,7 +109,7 @@ public class KraftonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>
         if (categorySpan != null) {
             category = categorySpan.text();
         } else {
-            log.error("krafon, invalid category format");
+            AppLogger.warnLog("krafon, invalid category format");
         }
         return category;
     }

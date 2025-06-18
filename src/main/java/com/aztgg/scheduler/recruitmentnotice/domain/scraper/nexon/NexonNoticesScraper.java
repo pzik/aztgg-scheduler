@@ -1,9 +1,9 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.nexon;
 
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
-import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
 
-@Slf4j
 public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private static final String MAIN_URL = "https://careers.nexon.com/recruit";
@@ -57,7 +56,7 @@ public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
                 result.addAll(notices);
             }
         } catch (Exception e) {
-            log.error("internal error", e);
+            AppLogger.errorLog("internal error", e);
             if (future != null) {
                 future.cancel(true); // 현재 작업 취소
             }
@@ -73,7 +72,7 @@ public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
         try {
             if (executor.awaitTermination(60, TimeUnit.SECONDS)) {
             } else {
-                log.warn(LocalTime.now() + " some jobs are not terminated, shutdown now");
+                AppLogger.warnLog(LocalTime.now() + " some jobs are not terminated, shutdown now");
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {

@@ -1,11 +1,11 @@
 package com.aztgg.scheduler.subscribeemail.application;
 
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.subscribeemail.application.dto.MailTemplateNoticeDto;
 import com.aztgg.scheduler.subscribeemail.domain.SubscribeEmailCategory;
 import com.aztgg.scheduler.subscribeemail.domain.SubscribeEmailRepository;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubscribeEmailService {
@@ -86,9 +85,9 @@ public class SubscribeEmailService {
             mimeMessageHelper.setText(setContext(email, strDate, strTags, mailTemplateNotices), true); // 메일 본문 내용, HTML 여부
             javaMailSender.send(mimeMessage);
 
-            log.info("Succeeded to send Email");
+            AppLogger.infoLog("Succeeded to send Email");
         } catch (Exception e) {
-            log.info("Failed to send Email");
+            AppLogger.infoLog("Failed to send Email");
             throw new RuntimeException(e);
         }
     }

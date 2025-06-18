@@ -1,11 +1,11 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.dunamu;
 
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class DunamuNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private static final String DUNAMU_CAREERS_URL = "https://dunamu.com/careers/jobs";
@@ -25,7 +24,7 @@ public class DunamuNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
     @Override
     public List<RecruitmentNoticeDto> scrap() throws IOException {
         try {
-            log.info("Starting to scrape Dunamu job postings from HTML: {}", DUNAMU_CAREERS_URL);
+            AppLogger.infoLog("Starting to scrape Dunamu job postings from HTML: {}", DUNAMU_CAREERS_URL);
             
             Document document = Jsoup.connect(DUNAMU_CAREERS_URL)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
@@ -35,7 +34,7 @@ public class DunamuNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
             // __NEXT_DATA__ 스크립트에서 JSON 데이터 추출
             Element nextDataScript = document.selectFirst("script#__NEXT_DATA__");
             if (nextDataScript == null) {
-                log.warn("Could not find __NEXT_DATA__ script in Dunamu careers page");
+                AppLogger.warnLog("Could not find __NEXT_DATA__ script in Dunamu careers page");
                 return Collections.emptyList();
             }
             
@@ -45,7 +44,7 @@ public class DunamuNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
             if (nextData.props() == null || nextData.props().pageProps() == null || 
                 nextData.props().pageProps().articles() == null || 
                 nextData.props().pageProps().articles().content() == null) {
-                log.warn("No job postings found in Dunamu __NEXT_DATA__");
+                AppLogger.warnLog("No job postings found in Dunamu __NEXT_DATA__");
                 return Collections.emptyList();
             }
             
@@ -54,11 +53,11 @@ public class DunamuNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
                     .map(this::convertToRecruitmentNotice)
                     .collect(Collectors.toList());
             
-            log.info("Successfully scraped {} Dunamu job notices from HTML", notices.size());
+            AppLogger.infoLog("Successfully scraped {} Dunamu job notices from HTML", notices.size());
             return notices;
             
         } catch (Exception e) {
-            log.error("Failed to scrape Dunamu job postings from HTML. Error: {}", e.getMessage(), e);
+            AppLogger.errorLog("Failed to scrape Dunamu job postings from HTML. Error: {}", e);
             return Collections.emptyList();
         }
     }
@@ -92,7 +91,7 @@ public class DunamuNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
             // ISO 8601 형식 ("2025-06-02T19:29:09") 파싱
             return LocalDateTime.parse(dateTimeString, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         } catch (Exception e) {
-            log.warn("Failed to parse datetime: {}, error: {}", dateTimeString, e.getMessage());
+            AppLogger.warnLog("Failed to parse datetime: {}, error: {}", dateTimeString, e.getMessage());
             return null;
         }
     }

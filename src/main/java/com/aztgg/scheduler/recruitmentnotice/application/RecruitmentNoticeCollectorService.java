@@ -1,11 +1,11 @@
 package com.aztgg.scheduler.recruitmentnotice.application;
 
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNotice;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
  * Scraper 를 이용해 채용공고를 수집하여 DB에 적재한다.
  * 템플릿 메서드 패턴 도입
  */
-@Slf4j
 public abstract class RecruitmentNoticeCollectorService {
 
     private final RecruitmentNoticeRepository recruitmentNoticeRepository;
@@ -32,12 +31,12 @@ public abstract class RecruitmentNoticeCollectorService {
     protected abstract List<RecruitmentNoticeDto> result();
 
     public void collect() {
-        log.info("{} scrapGroup collect start", scrapGroupCodeType.name());
+        AppLogger.infoLog("{} scrapGroup collect start", scrapGroupCodeType.name());
         long startTime = System.currentTimeMillis();
 
         List<RecruitmentNoticeDto> scrapResult = this.result();
         if (CollectionUtils.isEmpty(scrapResult)) {
-            log.warn("scrapResult is empty, diff check skipped");
+            AppLogger.warnLog("scrapResult is empty, diff check skipped");
             return;
         }
 
@@ -87,6 +86,6 @@ public abstract class RecruitmentNoticeCollectorService {
 
         long endTime = System.currentTimeMillis(); // 코드 끝난 시간
         long durationTimeSec = endTime - startTime;
-        log.info("{} collect end, duration = {} sec", scrapGroupCodeType.name(), (durationTimeSec / 1000));
+        AppLogger.infoLog("{} collect end, duration = {} sec", scrapGroupCodeType.name(), (durationTimeSec / 1000));
     }
 }
