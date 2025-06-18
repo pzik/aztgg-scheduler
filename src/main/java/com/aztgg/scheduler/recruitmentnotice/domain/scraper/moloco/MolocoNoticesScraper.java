@@ -1,10 +1,10 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.moloco;
 
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -21,7 +21,6 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class MolocoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private static final String MOLOCO_CAREERS_URL = "https://www.moloco.com/ko/open-positions";
@@ -38,11 +37,11 @@ public class MolocoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
     @Override
     public List<RecruitmentNoticeDto> scrap() throws IOException {
         try {
-            log.info("Starting to scrape Moloco job postings");
+            AppLogger.infoLog("Starting to scrape Moloco job postings");
             
             // 먼저 카테고리 정보를 크롤링
             Map<String, String> jobCategories = scrapeJobCategories();
-            log.info("Scraped categories: {}", jobCategories);
+            AppLogger.infoLog("Scraped categories: {}", jobCategories);
             
             // API에서 job 정보를 가져옴
             MolocoJobsApiResponseDto response = molocoCareersPublicRestClient.get()
@@ -51,7 +50,7 @@ public class MolocoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
                     .body(MolocoJobsApiResponseDto.class);
 
             if (response == null || response.jobs() == null) {
-                log.warn("No job data received from Moloco API");
+                AppLogger.warnLog("No job data received from Moloco API");
                 return new ArrayList<>();
             }
 
@@ -59,11 +58,11 @@ public class MolocoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
                     .map(job -> convertToRecruitmentNotice(job, jobCategories))
                     .collect(Collectors.toList());
 
-            log.info("Successfully scraped {} jobs from Moloco", jobs.size());
+            AppLogger.infoLog("Successfully scraped {} jobs from Moloco", jobs.size());
             return jobs;
 
         } catch (Exception e) {
-            log.error("Failed to fetch jobs from Moloco API. Error: {}", e.getMessage());
+            AppLogger.errorLog("Failed to fetch jobs from Moloco API. Error: {}", e);
             return new ArrayList<>();
         }
     }
@@ -105,21 +104,21 @@ public class MolocoNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
                                 String jobUrl = jobLink.getAttribute("href");
                                 if (jobUrl != null && !jobUrl.isEmpty()) {
                                     categories.put(jobUrl, category);
-                                    log.debug("Mapped job URL {} to category {}", jobUrl, category);
+                                    AppLogger.debugLog("Mapped job URL {} to category {}", jobUrl, category);
                                 }
                             }
                         }
                     }
                 } catch (Exception e) {
-                    log.warn("Failed to extract category from section: {}", e.getMessage());
+                    AppLogger.warnLog("Failed to extract category from section: {}", e.getMessage());
                 }
             }
             
-            log.info("Successfully scraped {} job categories from Moloco website", categories.size());
+            AppLogger.infoLog("Successfully scraped {} job categories from Moloco website", categories.size());
             return categories;
             
         } catch (Exception e) {
-            log.warn("Failed to scrape job categories from Moloco website: {}", e.getMessage());
+            AppLogger.warnLog("Failed to scrape job categories from Moloco website: {}", e.getMessage());
             return Collections.emptyMap();
         } finally {
             if (driver != null) {

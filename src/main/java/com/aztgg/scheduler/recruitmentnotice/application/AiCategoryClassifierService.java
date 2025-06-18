@@ -1,6 +1,7 @@
 package com.aztgg.scheduler.recruitmentnotice.application;
 
 import com.aztgg.scheduler.global.asset.PredefinedStandardCategory;
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.application.dto.CategoryClassifyRequestDto;
 import com.aztgg.scheduler.recruitmentnotice.application.dto.CategoryClassifyResponseDto;
 import com.aztgg.scheduler.recruitmentnotice.domain.categoryclassifier.CategoryClassifierSystemInstruction;
@@ -13,7 +14,6 @@ import com.google.genai.Client;
 import com.google.genai.errors.ClientException;
 import com.google.genai.types.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -21,7 +21,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Objects;
 
-@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class AiCategoryClassifierService {
@@ -40,7 +39,7 @@ public class AiCategoryClassifierService {
         if (CollectionUtils.isEmpty(recruitmentNotices)) {
             return;
         }
-        log.info("new recruitmentNotice found " + recruitmentNotices.size() + ", classifying category start");
+        AppLogger.infoLog("new recruitmentNotice found " + recruitmentNotices.size() + ", classifying category start");
 
         // Sets the system instruction in the config.
         CategoryClassifierSystemInstruction categoryClassifierSystemInstruction = new CategoryClassifierSystemInstruction(objectMapper, PredefinedStandardCategory.values());
@@ -61,7 +60,7 @@ public class AiCategoryClassifierService {
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
-                log.error(e.getMessage());
+                AppLogger.errorLog("internal error", e);
             }
         }
     }
@@ -75,7 +74,7 @@ public class AiCategoryClassifierService {
         String requestText;
         try {
             requestText = objectMapper.writeValueAsString(requestDtoList);
-            log.info("request text = " + requestText);
+            AppLogger.infoLog("request text = " + requestText);
         } catch (JsonProcessingException exception) {
             throw new RuntimeException("internal server error", exception.getCause());
         }
@@ -84,7 +83,7 @@ public class AiCategoryClassifierService {
         // update 수행
         try {
             GenerateContentResponse response = geminiClient.models.generateContent(GEMINI_MODEL, requestText, config);
-            log.info("gemini response = " + response.text());
+            AppLogger.infoLog("gemini response = " + response.text());
 
             List<CategoryClassifyResponseDto> responseDto = objectMapper.readValue(response.text(),
                     new TypeReference<List<CategoryClassifyResponseDto>>() {
@@ -99,12 +98,12 @@ public class AiCategoryClassifierService {
                 if (Objects.nonNull(recruitmentNotice)) {
                     recruitmentNotice.updateStandardCategory(dto.standardCategory());
                 } else {
-                    log.error("invalid gemini response");
+                    AppLogger.warnLog("invalid gemini response");
                 }
             }
         } catch (ClientException clientException) {
             // Too many request 뜨면 무시
-          log.error(clientException.getMessage());
+          AppLogger.warnLog(clientException.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("internal server error", e.getCause());
         }

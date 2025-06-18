@@ -1,9 +1,9 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.kakaobank;
 
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
@@ -15,7 +15,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class KakaoBankNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private final RestClient kakaoBankCareersPublicRestClient;
@@ -41,7 +40,7 @@ public class KakaoBankNoticesScraper implements Scraper<List<RecruitmentNoticeDt
             try {
                 Thread.sleep(1000); // 1초 쉬고
             } catch (Exception e) {
-                log.error("unexpected exception", e);
+                AppLogger.errorLog("unexpected exception", e);
                 throw new IllegalStateException();
             }
         } while (page <= totalPage);

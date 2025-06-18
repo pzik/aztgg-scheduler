@@ -1,10 +1,10 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.sendbird;
 
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,7 +17,6 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class SendbirdNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private static final String SENDBIRD_CAREERS_URL = "https://sendbird.com/ko/careers";
@@ -30,7 +29,7 @@ public class SendbirdNoticesScraper implements Scraper<List<RecruitmentNoticeDto
     @Override
     public List<RecruitmentNoticeDto> scrap() throws IOException {
         try {
-            log.info("Starting to scrape Sendbird job postings from Greenhouse API");
+            AppLogger.infoLog("Starting to scrape Sendbird job postings from Greenhouse API");
             
             SendbirdJobsApiResponseDto response = sendbirdCareersPublicRestClient.get()
                     .uri("/jobs?content=false")
@@ -38,7 +37,7 @@ public class SendbirdNoticesScraper implements Scraper<List<RecruitmentNoticeDto
                     .body(SendbirdJobsApiResponseDto.class);
             
             if (response == null || response.jobs() == null) {
-                log.warn("No job postings found in Sendbird Greenhouse API response");
+                AppLogger.warnLog("No job postings found in Sendbird Greenhouse API response");
                 return Collections.emptyList();
             }
             
@@ -48,12 +47,12 @@ public class SendbirdNoticesScraper implements Scraper<List<RecruitmentNoticeDto
             List<RecruitmentNoticeDto> notices = response.jobs().stream()
                     .map(job -> convertToRecruitmentNotice(job, jobCategories))
                     .collect(Collectors.toList());
-            
-            log.info("Successfully scraped {} Sendbird job notices from Greenhouse API", notices.size());
+
+            AppLogger.infoLog("Successfully scraped {} Sendbird job notices from Greenhouse API", notices.size());
             return notices;
             
         } catch (Exception e) {
-            log.error("Failed to fetch jobs from Sendbird Greenhouse API. Error: {}", e.getMessage(), e);
+            AppLogger.errorLog("Failed to fetch jobs from Sendbird Greenhouse API.", e);
             return Collections.emptyList();
         }
     }
@@ -81,11 +80,11 @@ public class SendbirdNoticesScraper implements Scraper<List<RecruitmentNoticeDto
                 }
             });
             
-            log.info("Successfully scraped {} job categories from Sendbird website", categories.size());
+            AppLogger.infoLog("Successfully scraped {} job categories from Sendbird website", categories.size());
             return categories;
             
         } catch (Exception e) {
-            log.warn("Failed to scrape job categories from Sendbird website: {}", e.getMessage());
+            AppLogger.warnLog("Failed to scrape job categories from Sendbird website: {}", e.getMessage());
             return Collections.emptyMap();
         }
     }

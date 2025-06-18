@@ -1,5 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.application.collectorservice;
 
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.application.RecruitmentNoticeCollectorService;
 import com.aztgg.scheduler.recruitmentnotice.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
@@ -7,14 +8,12 @@ import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.woowahan.WoowahanTechJobCodeType;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.woowahan.WoowahanTechJobGroupCodeNoticesScraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Service
 public class WoowahanNoticeCollectorService extends RecruitmentNoticeCollectorService {
 
@@ -41,7 +40,7 @@ public class WoowahanNoticeCollectorService extends RecruitmentNoticeCollectorSe
                 }
                 scrapResult.addAll(result);
             } catch (Exception e) {
-                log.error("unexpected exception", e);
+                AppLogger.errorLog("unexpected exception", e);
             }
         }
         return scrapResult;
