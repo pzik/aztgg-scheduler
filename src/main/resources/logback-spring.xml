@@ -27,14 +27,15 @@
         </encoder>
     </appender>
 
-    <!-- SYSTEM_LOG 로거 설정 -->
-    <logger name="SYSTEM_LOG" level="INFO" additivity="false">
+    <!-- SYSTEM_LOG 로거 설정 (시스템 로그는 TRACE 이상 로깅) -->
+    <logger name="SYSTEM_LOG" level="TRACE" additivity="false">
         <appender-ref ref="SYSTEM_LOG"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
 
-    <!-- 루트로거 구성, 루트로그의 기본 수준을 INFO로 지정 -->
+    <!-- 루트로거 구성, 루트 로그의 기본 수준을 INFO로 지정 (라이브러리, 프레임워크 등 로그는 INFO 이상부터 찍힘) -->
     <root level="INFO">
-        <appender-ref ref="STDOUT"/>
         <appender-ref ref="SYSTEM_LOG"/>
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
