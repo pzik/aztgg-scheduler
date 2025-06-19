@@ -50,7 +50,7 @@ jobs:
 
       - name: JAR를 EC2로 복사
         run: |
-          scp -i ~/.ssh/ec2.pem -o StrictHostKeyChecking=no ./build/libs/*.jar ubuntu@${{ secrets.EC2_HOST }}:/opt/scheduler/
+          rsync -az -e "ssh -i ~/.ssh/ec2.pem -o StrictHostKeyChecking=no" ./build/libs/*.jar ubuntu@${{ secrets.EC2_HOST }}:/opt/scheduler/
 
       - name: Restart systemd service on EC2
         run: |
