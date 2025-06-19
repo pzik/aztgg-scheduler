@@ -22,8 +22,13 @@
             <maxHistory>60</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
             <totalSizeCap>1GB</totalSizeCap> <!-- 전체 로그파일 크기 제한, 1기가 넘으면 오래된거 삭제 -->
         </rollingPolicy>
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeContext>true</includeContext>
+            <includeCallerData>false</includeCallerData>
+            <jsonGeneratorDecorator class="net.logstash.logback.decorate.CompositeJsonGeneratorDecorator">
+                <decorator class="net.logstash.logback.decorate.PrettyPrintingJsonGeneratorDecorator"/>
+            </jsonGeneratorDecorator>
+            <timestampPattern>yyyy-MM-dd HH:mm:ss.SSS</timestampPattern>
         </encoder>
     </appender>
 

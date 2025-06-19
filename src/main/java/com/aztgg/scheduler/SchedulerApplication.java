@@ -1,6 +1,5 @@
 package com.aztgg.scheduler;
 
-import com.aztgg.scheduler.global.logging.AppLogger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -11,7 +10,6 @@ public class SchedulerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SchedulerApplication.class, args);
-		AppLogger.debugLog("aa");
 	}
 
 }
