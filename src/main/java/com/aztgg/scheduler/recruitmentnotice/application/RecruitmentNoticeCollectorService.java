@@ -1,11 +1,14 @@
 package com.aztgg.scheduler.recruitmentnotice.application;
 
+import com.aztgg.scheduler.global.asset.WebhookType;
 import com.aztgg.scheduler.global.logging.AppLogger;
+import com.aztgg.scheduler.global.service.DiscordWebhookService;
 import com.aztgg.scheduler.recruitmentnotice.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.global.util.HashUtils;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNotice;
 import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -21,6 +24,8 @@ public abstract class RecruitmentNoticeCollectorService {
 
     private final RecruitmentNoticeRepository recruitmentNoticeRepository;
     private final ScrapGroupCodeType scrapGroupCodeType;
+    @Autowired
+    private DiscordWebhookService discordWebhookService;
 
     public RecruitmentNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
                                              ScrapGroupCodeType scrapGroupCodeType) {
@@ -36,6 +41,7 @@ public abstract class RecruitmentNoticeCollectorService {
 
         List<RecruitmentNoticeDto> scrapResult = this.result();
         if (CollectionUtils.isEmpty(scrapResult)) {
+            discordWebhookService.sendDiscordMessage(WebhookType.NOTICE, String.format("%s 공고 수집 결과 알림", scrapGroupCodeType.name()), "수집한 공고 개수: 0건", "#FF0000");
             AppLogger.warnLog("scrapResult is empty, diff check skipped");
             return;
         }
@@ -81,9 +87,9 @@ public abstract class RecruitmentNoticeCollectorService {
                         before.getClickCount(), before.getScrapedAt());
             }
         }
-
         recruitmentNoticeRepository.saveAll(afterRecruitmentNotices);
-
+        discordWebhookService.sendDiscordMessage(WebhookType.NOTICE, String.format("%s 공고 수집 결과 알림", scrapGroupCodeType.name()),
+                String.format("삭제된 공고 개수: %d건\n수집한 공고 개수 : %d건",deleteTargetIds.size(), scrapResult.size()), "#00FF00");
         long endTime = System.currentTimeMillis(); // 코드 끝난 시간
         long durationTimeSec = endTime - startTime;
         AppLogger.infoLog("{} collect end, duration = {} sec", scrapGroupCodeType.name(), (durationTimeSec / 1000));
