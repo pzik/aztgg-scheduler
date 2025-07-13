@@ -1,7 +1,6 @@
 package com.aztgg.scheduler.recruitmentnotice.application.collectorservice;
 
 import com.aztgg.scheduler.global.logging.AppLogger;
-import com.aztgg.scheduler.global.service.DiscordWebhookService;
 import com.aztgg.scheduler.recruitmentnotice.application.RecruitmentNoticeCollectorService;
 import com.aztgg.scheduler.recruitmentnotice.domain.ScrapGroupCodeType;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
