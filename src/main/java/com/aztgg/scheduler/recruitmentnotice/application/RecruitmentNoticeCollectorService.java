@@ -76,14 +76,26 @@ public abstract class RecruitmentNoticeCollectorService {
                 .map(RecruitmentNotice::getRecruitmentNoticeId)
                 .collect(Collectors.toSet());
 
+        // 삭제된 공고 제목
+        String deletedTitles = "";
+        if (!deleteTargetIds.isEmpty()) {
+            deletedTitles = beforeRecruitmentNotices.stream()
+                    .filter(notice -> deleteTargetIds.contains(notice.getRecruitmentNoticeId()))
+                    .map(RecruitmentNotice::getJobOfferTitle)
+                    .collect(Collectors.joining("\n- ", "- ", ""));
+        }
+
         // 신규 추가된 공고 목록
         List<RecruitmentNotice> newNotices = afterRecruitmentNotices.stream()
                         .filter(notice -> !beforeUrls.contains(notice.getUrl()))
                                 .toList();
-        // 신규 추가된 공고의 제목
-        String newTitles = newNotices.stream()
-                        .map(RecruitmentNotice::getJobOfferTitle)
-                                .collect(Collectors.joining("\n- ", "- ", ""));
+        // 신규 추가된 공고 제목
+        String newTitles = "";
+        if (!newNotices.isEmpty()) {
+            newTitles = newNotices.stream()
+                    .map(RecruitmentNotice::getJobOfferTitle)
+                    .collect(Collectors.joining("\n- ", "- ", ""));
+        }
 
         recruitmentNoticeRepository.deleteAllById(deleteTargetIds);
         beforeRecruitmentNotices.removeIf(recruitmentNotice -> deleteTargetIds.contains(recruitmentNotice.getRecruitmentNoticeId()));
@@ -106,8 +118,24 @@ public abstract class RecruitmentNoticeCollectorService {
         if (scrapResult.size() == 0 && deleteTargetIds.size() == 0 && newNotices.size() == 0) {
             AppLogger.infoLog("{} 공고 수집 결과: 변경 사항 없음 (알림 생략)", scrapGroupCodeType.name());
         } else {
-            discordWebhookSender.sendDiscordMessage(WebhookType.NOTICE, String.format("%s 공고 수집 결과 알림", scrapGroupCodeType.name()),
-                    String.format("전체 수집 개수 : %d건\n삭제된 공고 개수 : %d건\n추가된 공고 개수 : %d건\n%s",scrapResult.size(),deleteTargetIds.size(), newNotices.size(),newTitles), "#00FF00");
+            StringBuilder message = new StringBuilder();
+            message.append(String.format("전체 수집 개수 : %d건\n", scrapResult.size()));
+            message.append(String.format("삭제된 공고 개수 : %d건\n", deleteTargetIds.size()));
+            if (!deletedTitles.isEmpty()) {
+                message.append("삭제된 공고 목록:\n").append(deletedTitles).append("\n");
+            }
+            message.append(String.format("추가된 공고 개수 : %d건\n", newNotices.size()));
+            if (!newTitles.isEmpty()) {
+                message.append("추가된 공고 목록:\n").append(newTitles);
+            }
+            discordWebhookSender.sendDiscordMessage(
+                    WebhookType.NOTICE,
+                    String.format("%s 공고 수집 결과 알림", scrapGroupCodeType.name()),
+                    message.toString(),
+                    "#00FF00"
+            );
+
+
         }
         long endTime = System.currentTimeMillis(); // 코드 끝난 시간
         long durationTimeSec = endTime - startTime;
