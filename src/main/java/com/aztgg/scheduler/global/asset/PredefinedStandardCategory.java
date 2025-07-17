@@ -37,7 +37,7 @@ public enum PredefinedStandardCategory {
                     "However, game platform developers do not belong to 'GAME_PROGRAMMING'."),
 
     OPERATION("운영", "고객 지원, 운영 지원, 감사, 회계, 결산", null),
-    SALES("영업", "Sales, Marketing", null),
+    SALES("영업", "Sales", null),
     SECURITY("정보보안", "정보보안, 보안, 이상탐지", null),
     EMBEDDED("임베디드", "Robot, Robot Engineer, iOT, 임베디드 개발", null),
     HR("인사", "인사, 인사팀, 채용, 채용 관리자", null),
