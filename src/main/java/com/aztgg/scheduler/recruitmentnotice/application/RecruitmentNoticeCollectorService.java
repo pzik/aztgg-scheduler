@@ -39,14 +39,22 @@ public abstract class RecruitmentNoticeCollectorService {
     protected abstract List<RecruitmentNoticeDto> result();
 
     public void collect() {
+        AppLogger.infoLog("Running in thread: {}", Thread.currentThread().getName());
+
         AppLogger.infoLog("{} scrapGroup collect start", scrapGroupCodeType.name());
         long startTime = System.currentTimeMillis();
 
-        List<RecruitmentNoticeDto> scrapResult = this.result();
+        List<RecruitmentNoticeDto> scrapResult;
+        try {
+            scrapResult = this.result();
+        } catch (Exception e) {
+            AppLogger.errorLog("스크랩 중 예외 발생", e);
+            throw e;
+        }
+
         if (CollectionUtils.isEmpty(scrapResult)) {
             discordWebhookSender.sendDiscordMessage(WebhookType.NOTICE, String.format("%s 공고 수집 결과 알림", scrapGroupCodeType.name()), "수집한 공고 개수: 0건", "#FF0000");
-            AppLogger.warnLog("scrapResult is empty, diff check skipped");
-            return;
+            throw new IllegalStateException("scrapResult is empty");
         }
 
         List<RecruitmentNotice> beforeRecruitmentNotices = recruitmentNoticeRepository.findByScrapGroupCode(scrapGroupCodeType.name());
@@ -152,9 +160,9 @@ public abstract class RecruitmentNoticeCollectorService {
             backoff = @Backoff(delay = 1000, multiplier = 2.0)
     )
     public void collectWithRetry() {
+        AppLogger.infoLog("Running in thread: {}", Thread.currentThread().getName());
         collect();
     }
-
     // 마지막 리트라이 실패 시 호출되는 복구 로직
     @Recover
     public void recover(Exception e) {
