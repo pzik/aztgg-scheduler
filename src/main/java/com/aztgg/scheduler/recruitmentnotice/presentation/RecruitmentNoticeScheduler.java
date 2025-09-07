@@ -38,7 +38,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        kakaoCorpNoticeCollectorService.collect();
+        kakaoCorpNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -48,7 +48,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        woowahanNoticeCollectorService.collect();
+        woowahanNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -58,7 +58,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        tossNoticeCollectorService.collect();
+        tossNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -68,7 +68,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        lineNoticeCollectorService.collect();
+        lineNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -78,7 +78,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        daangnNoticeCollectorService.collect();
+        daangnNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -88,7 +88,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        kakaoBankNoticeCollectorService.collect();
+        kakaoBankNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -98,7 +98,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        kakaoGreetingNoticeCollectorService.collect();
+        kakaoGreetingNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -108,7 +108,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        naverNoticeCollectorService.collect();
+        naverNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -118,7 +118,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        coupangNoticeCollectorService.collect();
+        coupangNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -128,7 +128,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        nexonNoticesCollectorService.collect();
+        nexonNoticesCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -138,7 +138,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        kraftonNoticesCollectorService.collect();
+        kraftonNoticesCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -148,7 +148,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        molocoNoticeCollectorService.collect();
+        molocoNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -158,7 +158,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        dunamuNoticeCollectorService.collect();
+        dunamuNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
@@ -168,7 +168,7 @@ public class RecruitmentNoticeScheduler {
             AppLogger.debugLog("aztgg.donotnotice = true");
             return;
         }
-        sendbirdNoticeCollectorService.collect();
+        sendbirdNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 }
