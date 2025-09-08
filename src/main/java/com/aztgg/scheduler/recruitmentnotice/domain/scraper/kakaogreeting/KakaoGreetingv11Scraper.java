@@ -46,7 +46,7 @@ public class KakaoGreetingv11Scraper implements Scraper<List<RecruitmentNoticeDt
                 detailBaseUrl = "https://kakaopay.career.greetinghr.com";
                 positionApi = "https://api.greetinghr.com/ats/v1.1/career/workspaces/9737/job-positions/filter";
             } else if (corp.equals(PredefinedCorporate.KAKAO_ENTERPRISE)) {
-                documentHost = "https://careers.kakaoent.com/job";
+                documentHost = "https://careers.kakaoent.com/ko/job2";
                 detailBaseUrl = "https://careers.kakaoent.com";
                 positionApi = "https://api.greetinghr.com/ats/v1.1/career/workspaces/5191/job-positions/filter";
             } else if (corp.equals(PredefinedCorporate.KAKAO_GAMES)) {
