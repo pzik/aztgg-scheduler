@@ -10,11 +10,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DunamuNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
@@ -22,100 +21,129 @@ public class DunamuNoticesScraper implements Scraper<List<RecruitmentNoticeDto>>
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public List<RecruitmentNoticeDto> scrap() throws IOException {
+    public List<RecruitmentNoticeDto> scrap() {
+        List<RecruitmentNoticeDto> allNotices = new ArrayList<>();
         try {
-            AppLogger.infoLog("Starting to scrape Dunamu job postings from HTML: {}", DUNAMU_CAREERS_URL);
-            
+            AppLogger.infoLog("Starting to scrape Dunamu job list from: {}", DUNAMU_CAREERS_URL);
             Document document = Jsoup.connect(DUNAMU_CAREERS_URL)
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
-                    .timeout(10000)
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .timeout(10000)
                     .get();
-            
-            // __NEXT_DATA__ 스크립트에서 JSON 데이터 추출
             Element nextDataScript = document.selectFirst("script#__NEXT_DATA__");
             if (nextDataScript == null) {
-                AppLogger.warnLog("Could not find __NEXT_DATA__ script in Dunamu careers page");
+                AppLogger.warnLog("Could not find __NEXT_DATA__ script in Dunamu careers page.");
                 return Collections.emptyList();
             }
-            
             String jsonData = nextDataScript.html();
-            DunamuNextDataDto nextData = objectMapper.readValue(jsonData, DunamuNextDataDto.class);
-            
-            if (nextData.props() == null || nextData.props().pageProps() == null || 
-                nextData.props().pageProps().articles() == null || 
-                nextData.props().pageProps().articles().content() == null) {
-                AppLogger.warnLog("No job postings found in Dunamu __NEXT_DATA__");
-                return Collections.emptyList();
+            NextData listData = objectMapper.readValue(jsonData, NextData.class);
+
+            if (listData.props() != null && listData.props().pageProps() != null &&
+                listData.props().pageProps().articles() != null && listData.props().pageProps().articles().content() != null) {
+
+                for (ArticleSummary summary : listData.props().pageProps().articles().content()) {
+                    if (summary.id() != null && summary.id() != 0) {
+                        String detailUrl = DUNAMU_CAREERS_URL + "/" + summary.id();
+                        scrapNoticeDetail(detailUrl).ifPresent(allNotices::add);
+                    }
+                }
             }
-            
-            List<RecruitmentNoticeDto> notices = nextData.props().pageProps().articles().content().stream()
-                    .filter(article -> "ARTICLE".equals(article.categoryKind())) // 공지사항 제외, 실제 채용공고만
-                    .map(this::convertToRecruitmentNotice)
-                    .collect(Collectors.toList());
-            
-            AppLogger.infoLog("Successfully scraped {} Dunamu job notices from HTML", notices.size());
-            return notices;
-            
+            AppLogger.infoLog("Successfully scraped {} Dunamu job notices in total.", allNotices.size());
+            return allNotices;
         } catch (Exception e) {
-            AppLogger.errorLog("Failed to scrape Dunamu job postings from HTML. Error: {}", e);
+            String errorMessage = String.format("An error occurred while scraping Dunamu job list page: %s. Error: %s", DUNAMU_CAREERS_URL, e.getMessage());
+            AppLogger.errorLog(errorMessage, e);
             return Collections.emptyList();
         }
     }
 
-    private RecruitmentNoticeDto convertToRecruitmentNotice(DunamuArticleDto article) {
-        Set<String> categories = new HashSet<>();
-        if (article.categoryDisplayName() != null && !article.categoryDisplayName().isEmpty()) {
-            categories.add(article.categoryDisplayName());
+    private Optional<RecruitmentNoticeDto> scrapNoticeDetail(String detailUrl) {
+        try {
+            AppLogger.infoLog("Scraping Dunamu job detail from: {}", detailUrl);
+            Document document = Jsoup.connect(detailUrl)
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")
+                    .timeout(30000)
+                    .get();
+            Element nextDataScript = document.selectFirst("script#__NEXT_DATA__");
+            if (nextDataScript == null) {
+                AppLogger.warnLog("Could not find __NEXT_DATA__ script on detail page: {}", detailUrl);
+                return Optional.empty();
+            }
+            String jsonData = nextDataScript.html();
+            NextData detailData = objectMapper.readValue(jsonData, NextData.class);
+
+            ArticleDetail article = detailData.props().pageProps().article().article();
+
+            if (article == null || article.category() == null || !"ARTICLE".equals(article.category().kind())) {
+                AppLogger.infoLog("Skipping non-article page: {}", detailUrl);
+                return Optional.empty();
+            }
+
+            String title = article.title();
+            if (title == null || title.isEmpty()) {
+                return Optional.empty();
+            }
+
+            Set<String> categories = new HashSet<>();
+            if (article.category().displayName() != null && !article.category().displayName().isEmpty()) {
+                categories.add(article.category().displayName());
+            }
+
+            LocalDateTime startAt = parseDateTime(article.createdAt());
+            LocalDateTime endAt = parseDateTime(article.updatedAt());
+
+            return Optional.of(RecruitmentNoticeDto.builder()
+                    .jobOfferTitle(title)
+                    .url(detailUrl)
+                    .categories(categories)
+                    .corporateCodes(Set.of(PredefinedCorporate.DUNAMU.name()))
+                    .startAt(startAt)
+                    .endAt(endAt)
+                    .build());
+        } catch (Exception e) {
+            String errorMessage = String.format("Failed to scrape Dunamu job detail page: %s. Error: %s", detailUrl, e.getMessage());
+            AppLogger.errorLog(errorMessage, e);
+            return Optional.empty();
         }
-        
-        String jobUrl = "https://dunamu.com/careers/jobs/" + article.id();
-        
-        LocalDateTime startAt = parseDateTime(article.createdAt());
-        LocalDateTime endAt = parseDateTime(article.updatedAt());
-        
-        return RecruitmentNoticeDto.builder()
-                .jobOfferTitle(article.title())
-                .url(jobUrl)
-                .categories(categories)
-                .corporateCodes(Set.of(PredefinedCorporate.DUNAMU.name()))
-                .startAt(startAt)
-                .endAt(endAt)
-                .build();
     }
-    
+
     private LocalDateTime parseDateTime(String dateTimeString) {
         if (dateTimeString == null || dateTimeString.isEmpty()) {
             return null;
         }
         try {
-            // ISO 8601 형식 ("2025-06-02T19:29:09") 파싱
             return LocalDateTime.parse(dateTimeString, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        } catch (Exception e) {
-            AppLogger.warnLog("Failed to parse datetime: {}, error: {}", dateTimeString, e.getMessage());
+        } catch (DateTimeParseException e) {
+            AppLogger.warnLog("Failed to parse datetime string: '{}'. It is not in ISO_LOCAL_DATE_TIME format.", dateTimeString);
             return null;
         }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record DunamuNextDataDto(PropsDto props) {}
+    private record NextData(Props props) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record PropsDto(PagePropsDto pageProps) {}
+    private record Props(PageProps pageProps) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record PagePropsDto(ArticlesDto articles) {}
+    private record PageProps(ArticleList articles, ArticleContainer article) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record ArticlesDto(List<DunamuArticleDto> content) {}
+    private record ArticleList(List<ArticleSummary> content) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private record DunamuArticleDto(
-            Long id,
+    private record ArticleSummary(Long id) {}
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private record ArticleContainer(ArticleDetail article) {}
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private record ArticleDetail(
             String title,
-            String summary,
-            String categoryDisplayName,
-            String categoryKind,
             String createdAt,
-            String updatedAt
+            String updatedAt,
+            Category category
     ) {}
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private record Category(String kind, String displayName) {}
 }
