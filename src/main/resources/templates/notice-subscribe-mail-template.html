@@ -53,7 +53,7 @@
                         <p>
                             더 많은 빅테크 채용 공고를 보시려면
                             <a
-                                    href="https://www.nklcb.kr"
+                                    th:href="@{https://www.nklcb.kr}"
                                     style="color: #007bff; text-decoration: underline"
                             ><strong>nklcb.kr</strong></a
                             >
@@ -87,6 +87,45 @@
                                 th:text="${companyName + ' | ' + notice.strStandardCategory + ' | ' + dateRange}"
                         >
                             회사 | 직무 | 기간
+                        </div>
+                    </td>
+                </tr>
+                <!-- 커뮤니티 최근 게시글 영역 -->
+                <tr>
+                    <td
+                            style="
+                      padding: 24px;
+                      background-color: #f8f8f8;
+                      color: #333;
+                      text-align: center;
+                      font-size: 18px;
+                      font-weight: bold;
+                    "
+                    >
+                        💬 커뮤니티에서 이런 대화들이 오고가고 있어요
+                    </td>
+                </tr>
+                <!-- 최근 게시글 리스트 -->
+                <tr
+                        th:each="post : ${recentPosts}"
+                >
+                    <td style="padding: 16px; border-bottom: 1px solid #eee">
+                        <a
+                                th:href="@{'https://www.nklcb.kr/community/detail/' + ${post.postId}}"
+                                style="
+                        font-size: 16px;
+                        font-weight: bold;
+                        color: #222;
+                        text-decoration: none;
+                      "
+                                th:text="${post.title}"
+                        >게시글 제목</a
+                        >
+                        <div
+                                style="font-size: 14px; color: #666; margin-top: 4px"
+                                th:text="${post.author}"
+                        >
+                            작성자
                         </div>
                     </td>
                 </tr>

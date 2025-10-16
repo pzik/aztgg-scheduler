@@ -16,9 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,11 +76,19 @@ public class SubscribeEmailService {
                 .map(s -> "#" + s)
                 .collect(Collectors.joining(", "));
 
+        Map<String, Object> contextVars = new HashMap<>();
+        contextVars.put("email", email);
+        contextVars.put("strDate", strDate);
+        contextVars.put("strTags", strTags);
+        contextVars.put("mailTemplateNotices", mailTemplateNotices);
+        Context context = new Context();
+        context.setVariables(contextVars);
+
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
             mimeMessageHelper.setTo(email); // 메일 수신자
             mimeMessageHelper.setSubject("[nklcb]" + strDate + " 맞춤 채용 공고가 도착했어요!"); // 메일 제목
-            mimeMessageHelper.setText(setContext(email, strDate, strTags, mailTemplateNotices), true); // 메일 본문 내용, HTML 여부
+            mimeMessageHelper.setText(templateEngine.process("notice-subscribe-mail-template", context), true); // 메일 본문 내용, HTML 여부
             javaMailSender.send(mimeMessage);
 
             AppLogger.infoLog("Succeeded to send Email");
@@ -90,15 +96,5 @@ public class SubscribeEmailService {
             AppLogger.infoLog("Failed to send Email");
             throw new RuntimeException(e);
         }
-    }
-
-    //thymeleaf를 통한 html 적용
-    public String setContext(String email, String strDate, String strTags, List<MailTemplateNoticeDto> mailTemplateNotices) {
-        Context context = new Context();
-        context.setVariable("email", email);
-        context.setVariable("strDate", strDate);
-        context.setVariable("strTags", strTags);
-        context.setVariable("mailTemplateNotices", mailTemplateNotices);
-        return templateEngine.process("notice-subscribe-mail-template", context);
     }
 }
