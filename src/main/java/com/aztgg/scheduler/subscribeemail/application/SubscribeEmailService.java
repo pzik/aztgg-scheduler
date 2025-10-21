@@ -1,6 +1,7 @@
 package com.aztgg.scheduler.subscribeemail.application;
 
 import com.aztgg.scheduler.global.logging.AppLogger;
+import com.aztgg.scheduler.subscribeemail.application.dto.MailTemplateBoardDto;
 import com.aztgg.scheduler.subscribeemail.application.dto.MailTemplateNoticeDto;
 import com.aztgg.scheduler.subscribeemail.domain.SubscribeEmailCategory;
 import com.aztgg.scheduler.subscribeemail.domain.SubscribeEmailRepository;
@@ -31,41 +32,41 @@ public class SubscribeEmailService {
     private final SpringTemplateEngine templateEngine;
     private final SubscribeEmailRepository subscribeEmailRepository;
 
-    public void sendToSubscriber(List<MailTemplateNoticeDto> mailTemplateNotices) {
+    public void sendToSubscriber(List<MailTemplateNoticeDto> mailTemplateNotices, List<MailTemplateBoardDto> mailTemplateBoards) {
         for (var subscribeEmail : subscribeEmailRepository.findAll()) {
             Set<String> subscribeCategories = subscribeEmail.getCategories().stream()
-                    .map(SubscribeEmailCategory::getCategory)
-                    .collect(Collectors.toSet());
+                .map(SubscribeEmailCategory::getCategory)
+                .collect(Collectors.toSet());
 
             // 24시간 이내 수집된 공고를 우선한다.
             // 만약 공고 개수가 일정개수 미만이라면 기존 공고에서 추가한다.
             LocalDateTime dayAgo = LocalDateTime.now().minusHours(24);
             List<MailTemplateNoticeDto> recentNotices = mailTemplateNotices.stream()
-                    .filter(notice -> subscribeCategories.contains(notice.standardCategoryCode()))
-                    .filter(notice -> notice.scrapedAt().isAfter(dayAgo))
-                    .toList();
+                .filter(notice -> subscribeCategories.contains(notice.standardCategoryCode()))
+                .filter(notice -> notice.scrapedAt().isAfter(dayAgo))
+                .toList();
 
             List<MailTemplateNoticeDto> filteredNotices = new ArrayList<>(recentNotices);
 
             if (filteredNotices.size() < MINIMUM_NOTIFY_SIZE) {
                 int remaining = MINIMUM_NOTIFY_SIZE - filteredNotices.size();
                 List<MailTemplateNoticeDto> olderNotices = mailTemplateNotices.stream()
-                        .filter(notice -> subscribeCategories.contains(notice.standardCategoryCode()))
-                        .filter(notice -> notice.scrapedAt().isBefore(dayAgo))
-                        .limit(remaining)
-                        .toList();
+                    .filter(notice -> subscribeCategories.contains(notice.standardCategoryCode()))
+                    .filter(notice -> notice.scrapedAt().isBefore(dayAgo))
+                    .limit(remaining)
+                    .toList();
 
                 filteredNotices.addAll(olderNotices);
             }
 
             // 발송할 공고가 없다면 스킵한다.
             if (!filteredNotices.isEmpty()) {
-                send(subscribeEmail.getEmail(), subscribeCategories, filteredNotices);
+                send(subscribeEmail.getEmail(), subscribeCategories, filteredNotices, mailTemplateBoards);
             }
         }
     }
 
-    private void send(String email, Set<String> tags, List<MailTemplateNoticeDto> mailTemplateNotices) {
+    private void send(String email, Set<String> tags, List<MailTemplateNoticeDto> mailTemplateNotices, List<MailTemplateBoardDto> mailTemplateBoards) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         // getDate
@@ -75,14 +76,14 @@ public class SubscribeEmailService {
 
         // getStrTags
         String strTags = tags.stream()
-                .map(s -> "#" + s)
-                .collect(Collectors.joining(", "));
+            .map(s -> "#" + s)
+            .collect(Collectors.joining(", "));
 
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
             mimeMessageHelper.setTo(email); // 메일 수신자
             mimeMessageHelper.setSubject("[nklcb]" + strDate + " 맞춤 채용 공고가 도착했어요!"); // 메일 제목
-            mimeMessageHelper.setText(setContext(email, strDate, strTags, mailTemplateNotices), true); // 메일 본문 내용, HTML 여부
+            mimeMessageHelper.setText(setContext(email, strDate, strTags, mailTemplateNotices, mailTemplateBoards), true); // 메일 본문 내용, HTML 여부
             javaMailSender.send(mimeMessage);
 
             AppLogger.infoLog("Succeeded to send Email");
@@ -93,12 +94,13 @@ public class SubscribeEmailService {
     }
 
     //thymeleaf를 통한 html 적용
-    public String setContext(String email, String strDate, String strTags, List<MailTemplateNoticeDto> mailTemplateNotices) {
+    public String setContext(String email, String strDate, String strTags, List<MailTemplateNoticeDto> mailTemplateNotices, List<MailTemplateBoardDto> mailTemplateBoards) {
         Context context = new Context();
         context.setVariable("email", email);
         context.setVariable("strDate", strDate);
         context.setVariable("strTags", strTags);
         context.setVariable("mailTemplateNotices", mailTemplateNotices);
+        context.setVariable("mailTemplateBoards", mailTemplateBoards);
         return templateEngine.process("notice-subscribe-mail-template", context);
     }
 }
