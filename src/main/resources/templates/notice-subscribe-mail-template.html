@@ -90,6 +90,56 @@
                         </div>
                     </td>
                 </tr>
+
+                <!-- 게시글 섹션 헤더 -->
+                <tr th:if="${mailTemplateBoards != null and !mailTemplateBoards.isEmpty()}">
+                    <td
+                            style="
+                      padding: 24px 24px 16px 24px;
+                      background-color: #f8f8f8;
+                      font-size: 18px;
+                      font-weight: bold;
+                      color: #222;
+                    "
+                    >
+                        💬 최신 커뮤니티 게시글
+                    </td>
+                </tr>
+
+                <!-- 게시글 리스트 -->
+                <tr th:each="board : ${mailTemplateBoards}">
+                    <td style="padding: 16px; border-bottom: 1px solid #eee; background-color: #f8f8f8">
+                        <a
+                                th:href="@{'https://www.nklcb.kr/community/detail/' + ${board.boardId}}"
+                                style="
+                        font-size: 16px;
+                        font-weight: bold;
+                        color: #222;
+                        text-decoration: none;
+                      "
+                                th:text="${board.title}"
+                        >게시글 제목</a
+                        >
+                        <div
+                                style="font-size: 14px; color: #666; margin-top: 4px"
+                                th:text="${board.nickname + ' | ' + #temporals.format(board.createdAt.plusHours(9), 'yyyy-MM-dd a hh:mm')}"
+                        >
+                            작성자 | 날짜
+                        </div>
+                        <div
+                                style="
+                        font-size: 14px;
+                        color: #555;
+                        margin-top: 8px;
+                        line-height: 1.5;
+                      "
+                                th:text="${#strings.length(board.content) > 100 ? #strings.substring(board.content, 0, 100) + '...' : board.content}"
+                        >
+                            게시글 내용 미리보기
+                        </div>
+                    </td>
+                </tr>
+
                 <!-- 푸터 -->
                 <tr>
                     <td
