@@ -126,7 +126,7 @@ public enum PredefinedCorporate {
                 return value;
             }
         }
-        AppLogger.warnLog("invalid predefined corp id, origin = %s", id);
+        AppLogger.warnLog("invalid predefined corp id, origin = " + id);
         return UNKNOWN;
     }
 

@@ -1,6 +1,7 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.toss;
 
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
+import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -43,11 +44,6 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                             .jobOfferTitle(primaryJob.title())
                             .startAt(startOffsetDateTime.atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime());
 
-                    Optional<JobMetadata> optJobCategory = primaryJob.getJobCategoryMetadata();
-                    if (optJobCategory.isEmpty() || Objects.isNull(optJobCategory.get().value)) { // 카테고리가 있어야함
-                        return null;
-                    }
-
                     // 공고 대상 법인 추출
                     Set<String> corporates = new HashSet<>();
                     if (Objects.nonNull(item.jobs())) {
@@ -63,9 +59,16 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                     }
 
                     // 카테고리 추출
-                    JobMetadata categoryMeta = optJobCategory.get();
+                    Optional<JobMetadata> optJobCategory = primaryJob.getJobCategoryMetadata();
+                    if (optJobCategory.isEmpty() || Objects.isNull(optJobCategory.get().value)) { // 카테고리가 있어야함
+                        // job category가 없다면 임의로 ETC를 넣어준다.
+                        recruitmentNoticeDtoBuilder.categories(Set.of("ETC"));
+                    } else {
+                        JobMetadata categoryMeta = optJobCategory.get();
+                        recruitmentNoticeDtoBuilder.categories(Set.of(categoryMeta.value.toString()));
+                    }
+
                     return recruitmentNoticeDtoBuilder
-                            .categories(Set.of(categoryMeta.value.toString()))
                             .corporateCodes(corporates)
                             .build();
                 })
@@ -94,7 +97,7 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
                 return Optional.empty();
             }
             return metadata.stream()
-                    .filter(item -> item.id().equals(4168924003L))
+                    .filter(item -> item.id().equals(24623243003L))
                     .findFirst();
         }
     }
@@ -114,7 +117,7 @@ public class TossTotalNoticesScraper implements Scraper<List<RecruitmentNoticeDt
 
     /**
      * id 가 4169410003 인 경우 value 가 공고 대상 자회사임 (토스, 토스뱅크 등)
-     * id 가 4168924003 인 경우 job category 를  의미 (개발자 - Engineering (Product), 디자이너 - Design)
+     * id 가 24623243003 인 경우 job category 를  의미 (개발자 - Engineering (Product), 디자이너 - Design)
      */
     @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
     private record JobMetadata(Long id, Object value) {
