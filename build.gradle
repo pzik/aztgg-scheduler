@@ -35,7 +35,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 
 	// google gemini
-	implementation 'com.google.genai:google-genai:1.0.0'
+	implementation 'com.google.genai:google-genai:1.31.0'
 
 	// for Mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
