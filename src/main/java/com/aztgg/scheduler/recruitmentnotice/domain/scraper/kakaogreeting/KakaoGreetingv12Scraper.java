@@ -17,15 +17,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 그리팅을 1.1 버전 사용하는 카카오 계열사 스크래퍼
+ * 그리팅을 1.2 버전 사용하는 카카오 계열사 스크래퍼
  */
-public class KakaoGreetingv11Scraper implements Scraper<List<RecruitmentNoticeDto>> {
+public class KakaoGreetingv12Scraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private final RestClient baseRestClient;
-    private final Set<PredefinedCorporate> kakaoGreetingCorp = Set.of(PredefinedCorporate.KAKAO_MOBILITY,
-            PredefinedCorporate.KAKAO_PAY, PredefinedCorporate.KAKAO_GAMES);
+    private final Set<PredefinedCorporate> kakaoGreetingCorp = Set.of(PredefinedCorporate.KAKAO_ENTERPRISE);
 
-    public KakaoGreetingv11Scraper(RestClient baseRestClient) {
+    public KakaoGreetingv12Scraper(RestClient baseRestClient) {
         this.baseRestClient = baseRestClient;
     }
 
@@ -37,18 +36,10 @@ public class KakaoGreetingv11Scraper implements Scraper<List<RecruitmentNoticeDt
             String documentHost;
             String detailBaseUrl;
             String positionApi;
-            if (corp.equals(PredefinedCorporate.KAKAO_MOBILITY)) {
-                documentHost = "https://kakaomobility.career.greetinghr.com/guide";
-                detailBaseUrl = "https://kakaomobility.career.greetinghr.com";
-                positionApi = "https://api.greetinghr.com/ats/v1.1/career/workspaces/14346/job-positions/filter";
-            } else if (corp.equals(PredefinedCorporate.KAKAO_PAY)) {
-                documentHost = "https://kakaopay.career.greetinghr.com/main";
-                detailBaseUrl = "https://kakaopay.career.greetinghr.com";
-                positionApi = "https://api.greetinghr.com/ats/v1.1/career/workspaces/9737/job-positions/filter";
-            } else if (corp.equals(PredefinedCorporate.KAKAO_GAMES)) {
-                documentHost = "https://recruit.kakaogames.com/joinjuskr";
-                detailBaseUrl = "https://recruit.kakaogames.com/";
-                positionApi = "https://api.greetinghr.com/ats/v1.1/career/workspaces/7144/job-positions/filter";
+            if (corp.equals(PredefinedCorporate.KAKAO_ENTERPRISE)) {
+                documentHost = "https://careers.kakaoenterprise.com/ko/job";
+                detailBaseUrl = "https://careers.kakaoenterprise.com";
+                positionApi = "https://api.greetinghr.com/ats/v1.2/career/workspaces/12556/job-positions/filter";
             } else {
                 throw new IllegalArgumentException("유효하지 않은 카카오 그리팅 사용하는 계열사");
             }
@@ -140,3 +131,4 @@ public class KakaoGreetingv11Scraper implements Scraper<List<RecruitmentNoticeDt
 
     }
 }
+
