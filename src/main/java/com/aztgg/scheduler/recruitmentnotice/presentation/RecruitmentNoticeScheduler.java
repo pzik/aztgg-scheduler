@@ -21,6 +21,7 @@ public class RecruitmentNoticeScheduler {
     private final NaverNoticeCollectorService naverNoticeCollectorService;
     private final CoupangNoticeCollectorService coupangNoticeCollectorService;
     private final KakaoGreetingNoticeCollectorService kakaoGreetingNoticeCollectorService;
+    private final KakaoGreetingV12NoticeCollectorService kakaoGreetingV12NoticeCollectorService;
     private final NexonNoticesCollectorService nexonNoticesCollectorService;
     private final KraftonNoticesCollectorService kraftonNoticesCollectorService;
     private final MolocoNoticeCollectorService molocoNoticeCollectorService;
@@ -99,6 +100,16 @@ public class RecruitmentNoticeScheduler {
             return;
         }
         kakaoGreetingNoticeCollectorService.collectWithRetry();
+        aiCategoryClassifierService.classifyingNoticeCategories();
+    }
+
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectKakaoGreetingV12Notices() {
+        if (doNotCollect) {
+            AppLogger.debugLog("aztgg.donotnotice = true");
+            return;
+        }
+        kakaoGreetingV12NoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 
