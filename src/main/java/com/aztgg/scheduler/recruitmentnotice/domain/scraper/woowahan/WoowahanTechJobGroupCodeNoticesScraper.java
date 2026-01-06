@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 디자이너 채용은 따로 없는듯
- * 우리는 Tech JobGroupCode 내 직무(jobCodes)를 카테고리로 뽑는다.
  */
 public class WoowahanTechJobGroupCodeNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
@@ -33,8 +31,7 @@ public class WoowahanTechJobGroupCodeNoticesScraper implements Scraper<List<Recr
         WoowahanCareersApiResponseDto responseDto = woowahanCareersPublicRestClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/w1/recruits")
                         .queryParam("recruitCampaignSeq", 0)
-                        .queryParam("jobGroupCodes", "BA005001") // Tech(BA005001), Product(3ABA005005) 등 상단 여러개 선택 가능
-                        .queryParam("category", "jobGroupCodes:BA005001")
+                        .queryParam("category", "all:all")
                         .queryParam("jobCodes", jobCode) // 그룹코드 내 직무
                         .queryParam("page", 0)
                         .queryParam("size", "9999")

@@ -9,10 +9,7 @@ import org.springframework.web.client.RestClient;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class KakaoBankNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
@@ -48,11 +45,10 @@ public class KakaoBankNoticesScraper implements Scraper<List<RecruitmentNoticeDt
     }
 
     private KakaoBankApiResponseDto response(int page) {
-        return kakaoBankCareersPublicRestClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/user/recruit")
-                        .queryParam("pageNumber", page)
-                        .queryParam("pageSize", 100) // 100개씩
+        return kakaoBankCareersPublicRestClient.post()
+                .uri(uriBuilder -> uriBuilder.path("/recruits")
                         .build())
+                .body(Map.of("pageNumber", page, "pageSize", 100))
                 .retrieve()
                 .body(KakaoBankApiResponseDto.class);
     }
