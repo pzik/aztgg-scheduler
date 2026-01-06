@@ -29,7 +29,7 @@ public class AiCategoryClassifierService {
     private final Client geminiClient;
     private final ObjectMapper objectMapper;
 
-    private static final String GEMINI_MODEL = "gemini-2.5-flash-lite";
+    private static final String GEMINI_MODEL = "gemini-2.5-flash";
 
     /**
      * 카테고리 분류 수행
