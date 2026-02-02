@@ -3,10 +3,6 @@ spring:
     import: classpath:secrets/secrets.yml # API 경로 등 비밀정보 기본임포트
   profiles:
     active: local
-
-logging:
-  file:
-    path: ./logs
 ---
 spring:
   config:
