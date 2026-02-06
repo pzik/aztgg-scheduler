@@ -84,7 +84,7 @@ public class NexonNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
 
     private WebDriver createWebDriver() {
         ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--headless=new");
         chromeOptions.addArguments("--lang=ko");
         chromeOptions.addArguments("--no-sandbox");
         chromeOptions.addArguments("--disable-dev-shm-usage");
