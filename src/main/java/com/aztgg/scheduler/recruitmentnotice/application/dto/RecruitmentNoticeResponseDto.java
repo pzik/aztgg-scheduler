@@ -17,17 +17,4 @@ public record RecruitmentNoticeResponseDto(Long recruitmentNoticeId,
                                            LocalDateTime endAt,
                                            LocalDateTime scrapedAt) {
 
-    public static RecruitmentNoticeResponseDto from(RecruitmentNotice recruitmentNotice) {
-        Set<String> corpCodes = StringUtils.commaDelimitedListToSet(recruitmentNotice.getCorporateCodes());
-        return RecruitmentNoticeResponseDto.builder()
-                .recruitmentNoticeId(recruitmentNotice.getRecruitmentNoticeId())
-                .companyCode(recruitmentNotice.getCompanyCode())
-                .jobOfferTitle(recruitmentNotice.getJobOfferTitle())
-                .corporateCodes(corpCodes)
-                .standardCategory(recruitmentNotice.getStandardCategory())
-                .startAt(recruitmentNotice.getStartAt())
-                .endAt(recruitmentNotice.getEndAt())
-                .scrapedAt(recruitmentNotice.getScrapedAt())
-                .build();
-    }
 }

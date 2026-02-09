@@ -11,6 +11,8 @@ public interface RecruitmentNoticeRepository extends CrudRepository<RecruitmentN
 
     List<RecruitmentNotice> findByScrapGroupCode(String scrapGroupCode);
 
+    List<RecruitmentNotice> findAllByCompanyCode(String companyCode);
+
     @Query("SELECT r.* FROM recruitment_notice r WHERE r.standardCategory IS NULL OR r.standardCategory = ''")
     List<RecruitmentNotice> findAllStandardCategoryIsNullOrEmpty();
 
