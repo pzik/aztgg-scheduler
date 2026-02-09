@@ -4,12 +4,13 @@ import com.aztgg.scheduler.board.infrastructure.client.BoardApiClient;
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
 import com.aztgg.scheduler.global.asset.PredefinedCompany;
 import com.aztgg.scheduler.global.asset.PredefinedStandardCategory;
-import com.aztgg.scheduler.recruitmentnotice.application.RecruitmentNoticeService;
-import com.aztgg.scheduler.recruitmentnotice.application.dto.RecruitmentNoticeResponseDto;
+import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeDomainService;
+import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNotice;
 import com.aztgg.scheduler.subscribeemail.application.dto.MailTemplateBoardDto;
 import com.aztgg.scheduler.subscribeemail.application.dto.MailTemplateNoticeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,25 +19,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SubscribeEmailFacadeService {
 
-    private final RecruitmentNoticeService recruitmentNoticeService;
+    private final RecruitmentNoticeDomainService recruitmentNoticeDomainService;
     private final SubscribeEmailService subscribeEmailService;
     private final BoardApiClient boardApiClient;
 
     public void notifyNewRecruitmentNotices() {
         // 채용 공고 데이터 수집
-        List<RecruitmentNoticeResponseDto> recruitmentNoticeResponses = recruitmentNoticeService.findAllNewestNotices();
+        List<RecruitmentNotice> recruitmentNoticeResponses = recruitmentNoticeDomainService.findAllNewestNotices();
 
         List<MailTemplateNoticeDto> mailTemplateNotices = recruitmentNoticeResponses.stream()
             .map(a -> {
-                String strCorps = a.corporateCodes().stream()
+                String strCorps = StringUtils.commaDelimitedListToSet(a.getCorporateCodes()).stream()
                     .map(PredefinedCorporate::fromCode)
                     .map(PredefinedCorporate::getKorean)
                     .collect(Collectors.joining(", "));
 
-                return new MailTemplateNoticeDto(a.recruitmentNoticeId(), strCorps, a.jobOfferTitle(),
-                    a.companyCode(), PredefinedCompany.fromCode(a.companyCode()).getKorean(),
-                    a.standardCategory(), PredefinedStandardCategory.fromCode(a.standardCategory()).getKorean(),
-                    a.startAt(), a.endAt(), a.scrapedAt());
+                return new MailTemplateNoticeDto(a.getRecruitmentNoticeId(), strCorps, a.getJobOfferTitle(),
+                    a.getCompanyCode(), PredefinedCompany.fromCode(a.getCompanyCode()).getKorean(),
+                    a.getStandardCategory(), PredefinedStandardCategory.fromCode(a.getStandardCategory()).getKorean(),
+                    a.getStartAt(), a.getEndAt(), a.getScrapedAt());
             })
             .toList();
 
