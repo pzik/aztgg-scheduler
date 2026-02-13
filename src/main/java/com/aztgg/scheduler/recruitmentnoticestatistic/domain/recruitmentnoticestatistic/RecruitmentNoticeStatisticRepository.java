@@ -19,5 +19,5 @@ public interface RecruitmentNoticeStatisticRepository extends CrudRepository<Rec
             @Param("createAt") LocalDate createAt
     );
 
-    List<RecruitmentNoticeStatistic> findAllByCreatedAt(LocalDate createAt);
+    List<RecruitmentNoticeStatistic> findAllByCompanyCodeAndCreatedAt(String companyCode, LocalDate createAt);
 }

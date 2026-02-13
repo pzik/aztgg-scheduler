@@ -25,15 +25,16 @@ public class RecruitmentNoticeStatisticFacadeService {
     private final RecruitmentNoticeDomainService recruitmentNoticeDomainService;
 
     public void collect(LocalDate collectDate) {
-        // 이미 존재하는 통계는 삭제
-        List<RecruitmentNoticeStatistic> before = recruitmentNoticeStatisticDomainService.findAllRetryableItemsByCreatedAt(collectDate);
-        if (!before.isEmpty()) {
-            AppLogger.infoLog(collectDate + " 일자 이전 통계 기록이 있어 삭제 후 재처리합니다");
-            recruitmentNoticeStatisticDomainService.deleteStatisticItems(before);
-        }
-
         for (var company : PredefinedCompany.values()) {
             AppLogger.infoLog(company + " 통계 수집 시작, 일자 = " + collectDate);
+
+            // 이미 존재하는 통계는 삭제
+            List<RecruitmentNoticeStatistic> before = recruitmentNoticeStatisticDomainService.findAllRetryableItemsByCompanyCodeAndCreatedAt(company, collectDate);
+            if (!before.isEmpty()) {
+                AppLogger.infoLog(collectDate + " 일자 이전 통계 기록이 있어 삭제 후 재처리합니다");
+                recruitmentNoticeStatisticDomainService.deleteStatisticItems(before);
+            }
+
             List<RecruitmentNotice> recruitmentNoticeList = recruitmentNoticeDomainService.findAllByCompanyCode(company.name());
             // standardCategory 정의가 안된애들은 재처리로 이동
             List<Long> retryableNotices = recruitmentNoticeList.stream()

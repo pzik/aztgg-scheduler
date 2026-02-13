@@ -17,8 +17,8 @@ public class RecruitmentNoticeStatisticScheduler {
      * 매일 한 번 23시에 통계 정보 수집한다.
      * standardCategory 정의가 되지 않은 공고들은 재처리 항목으로 기록한다.
      */
-//    @Scheduled(cron = "0 1 23 * * *", zone = "Asia/Seoul")
-    @Scheduled(fixedDelay = 4_3200_000)
+    @Scheduled(cron = "0 1 23 * * *", zone = "Asia/Seoul")
+//    @Scheduled(fixedDelay = 4_3200_000)
     public void collectStatistics() {
         recruitmentNoticeStatisticFacadeService.collect(LocalDate.now());
     }

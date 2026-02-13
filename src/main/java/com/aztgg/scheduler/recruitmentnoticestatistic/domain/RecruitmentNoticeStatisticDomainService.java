@@ -1,5 +1,6 @@
 package com.aztgg.scheduler.recruitmentnoticestatistic.domain;
 
+import com.aztgg.scheduler.global.asset.PredefinedCompany;
 import com.aztgg.scheduler.recruitmentnoticestatistic.domain.recruitmentnoticestatistic.RecruitmentNoticeStatistic;
 import com.aztgg.scheduler.recruitmentnoticestatistic.domain.recruitmentnoticestatistic.RecruitmentNoticeStatisticRepository;
 import com.aztgg.scheduler.recruitmentnoticestatistic.domain.retryablerecruitmentnoticestatistic.RetryableRecruitmentNoticeStatistic;
@@ -40,8 +41,8 @@ public class RecruitmentNoticeStatisticDomainService {
         return retryableRecruitmentNoticeStatisticRepository.findAll();
     }
 
-    public List<RecruitmentNoticeStatistic> findAllRetryableItemsByCreatedAt(LocalDate createAt) {
-        return recruitmentNoticeStatisticRepository.findAllByCreatedAt(createAt);
+    public List<RecruitmentNoticeStatistic> findAllRetryableItemsByCompanyCodeAndCreatedAt(PredefinedCompany company, LocalDate createAt) {
+        return recruitmentNoticeStatisticRepository.findAllByCompanyCodeAndCreatedAt(company.name(), createAt);
     }
 
     @Transactional
