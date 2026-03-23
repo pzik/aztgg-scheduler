@@ -80,9 +80,9 @@ public class KakaoGreetingv11Scraper implements Scraper<List<RecruitmentNoticeDt
             String detailId = card.attr("href");
             String detailUrl = detailBaseUrl + detailId;
 
-            Elements divs = card.select("li > div > div");
-            Element titleElement = divs.get(0);
-            Element metaElement = divs.get(1);
+            Elements titleAndMeta = card.select("li > div");
+            Element titleElement = titleAndMeta.select("span").getFirst();
+            Element metaElement = titleAndMeta.select("div").getFirst();
 
             Elements metaElementItems = metaElement.select("span");
 
