@@ -2,6 +2,7 @@ package com.aztgg.scheduler.global.service;
 
 import com.aztgg.scheduler.global.asset.WebhookType;
 import com.aztgg.scheduler.global.logging.AppLogger;
+import com.aztgg.scheduler.global.util.ProfileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -12,14 +13,16 @@ import java.util.Map;
 
 @Service
 public class DiscordWebhookSender {
-    private final RestClient restClient;
+
+    private final RestClient restClient =RestClient.create();
+    private final ProfileUtils profileUtils;
 
     @Value("${discord.webhook.notice-url}")
     private String noticeWebhookUrl;
     private String hotIssueWebhookUrl;
 
-    public DiscordWebhookSender() {
-        this.restClient = RestClient.create();
+    public DiscordWebhookSender(ProfileUtils profileUtils) {
+        this.profileUtils = profileUtils;
     }
 
     public void sendDiscordMessage(WebhookType type, String title, String description, String colorHex) {
@@ -36,17 +39,18 @@ public class DiscordWebhookSender {
 
         Map<String, Object> payload = Map.of("embeds", List.of(embed));
 
-        try {
-            restClient.post()
-                    .uri(webhookUrl)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(payload)
-                    .retrieve()
-                    .toBodilessEntity();
-        } catch(Exception e){
-            AppLogger.errorLog("디스코드 Embed 전송 실패 ", e);
+        if (!profileUtils.isLocal()) {
+            try {
+                restClient.post()
+                        .uri(webhookUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(payload)
+                        .retrieve()
+                        .toBodilessEntity();
+            } catch(Exception e){
+                AppLogger.errorLog("디스코드 Embed 전송 실패 ", e);
+            }
         }
-
     }
 
 }

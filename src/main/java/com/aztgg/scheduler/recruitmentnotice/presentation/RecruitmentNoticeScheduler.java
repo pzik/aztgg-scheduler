@@ -1,6 +1,7 @@
 package com.aztgg.scheduler.recruitmentnotice.presentation;
 
 import com.aztgg.scheduler.global.logging.AppLogger;
+import com.aztgg.scheduler.global.util.ProfileUtils;
 import com.aztgg.scheduler.recruitmentnotice.application.AiCategoryClassifierService;
 import com.aztgg.scheduler.recruitmentnotice.application.collectorservice.*;
 import lombok.RequiredArgsConstructor;
