@@ -23,6 +23,7 @@ public enum PredefinedCompany {
     MOLOCO("몰로코"),
     DUNAMU("두나무"),
     SENDBIRD("센드버드"),
+    KREAM("크림"),
     ;
 
     private final String korean;

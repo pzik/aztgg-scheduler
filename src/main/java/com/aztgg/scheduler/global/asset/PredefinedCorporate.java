@@ -115,6 +115,10 @@ public enum PredefinedCorporate {
 
     // 센드버드
     SENDBIRD("SENDBIRD", PredefinedCompany.SENDBIRD, "센드버드"),
+
+    // 크림
+    KREAM("KREAM", PredefinedCompany.KREAM, "크림"),
+    KREAM_PAY("KREAM Pay", PredefinedCompany.KREAM, "크림페이"),
     ;
 
     private final String id; // 각 스크랩 시 공고의 대상 법인을 식별하는 값
