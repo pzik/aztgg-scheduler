@@ -28,6 +28,7 @@ public class RecruitmentNoticeScheduler {
     private final MolocoNoticeCollectorService molocoNoticeCollectorService;
     private final DunamuNoticeCollectorService dunamuNoticeCollectorService;
     private final SendbirdNoticeCollectorService sendbirdNoticeCollectorService;
+    private final KreamNoticeCollectorService kreamNoticeCollectorService;
 
     private final AiCategoryClassifierService aiCategoryClassifierService;
 
@@ -181,6 +182,16 @@ public class RecruitmentNoticeScheduler {
             return;
         }
         sendbirdNoticeCollectorService.collectWithRetry();
+        aiCategoryClassifierService.classifyingNoticeCategories();
+    }
+
+    @Scheduled(fixedDelay = 4_3200_000)
+    public void collectKreamTotalNotices() {
+        if (doNotCollect) {
+            AppLogger.debugLog("aztgg.donotnotice = true");
+            return;
+        }
+        kreamNoticeCollectorService.collectWithRetry();
         aiCategoryClassifierService.classifyingNoticeCategories();
     }
 }

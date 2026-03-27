@@ -26,6 +26,7 @@ public enum ScrapGroupCodeType {
     MOLOCO(PredefinedCompany.MOLOCO),
     DUNAMU(PredefinedCompany.DUNAMU),
     SENDBIRD(PredefinedCompany.SENDBIRD),
+    KREAM(PredefinedCompany.KREAM),
     ;
 
     private final PredefinedCompany company;
