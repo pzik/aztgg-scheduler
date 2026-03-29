@@ -38,7 +38,7 @@ public class KreamNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> 
             String annoId = extractAnnoId(card);
             if (annoId == null) continue;
 
-            String url = BASE_URL + "/rcrt/view.do?rcrtId=" + annoId;
+            String url = BASE_URL + "/rcrt/view.do?annoId=" + annoId;
 
             // 법인 구분 (제목에서 추출)
             Set<String> corporateCodes = Set.of(
