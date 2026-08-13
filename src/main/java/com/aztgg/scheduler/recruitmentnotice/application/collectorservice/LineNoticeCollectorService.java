@@ -8,7 +8,6 @@ import com.aztgg.scheduler.recruitmentnotice.domain.RecruitmentNoticeRepository;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.line.LineNoticesScraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,17 +15,13 @@ import java.util.List;
 @Service
 public class LineNoticeCollectorService extends RecruitmentNoticeCollectorService {
 
-    private final RestClient lineCareersPublicRestClient;
-
-    public LineNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
-                                                     RestClient lineCareersPublicRestClient) {
+    public LineNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository) {
         super(recruitmentNoticeRepository, ScrapGroupCodeType.LINE);
-        this.lineCareersPublicRestClient = lineCareersPublicRestClient;
     }
 
     @Override
     protected List<RecruitmentNoticeDto> result() {
-        Scraper<List<RecruitmentNoticeDto>> scraper = new LineNoticesScraper(lineCareersPublicRestClient);
+        Scraper<List<RecruitmentNoticeDto>> scraper = new LineNoticesScraper();
         List<RecruitmentNoticeDto> scrapResult = new ArrayList<>();
         try {
             scrapResult.addAll(scraper.scrap());

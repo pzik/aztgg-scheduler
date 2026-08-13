@@ -3,88 +3,85 @@ package com.aztgg.scheduler.recruitmentnotice.domain.scraper.daangn;
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
-import org.springframework.web.client.RestClient;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jsoup.Jsoup;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class DaangnNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
-    private final RestClient daangnCareersPublicRestClient;
-
-    public DaangnNoticesScraper(RestClient daangnCareersPublicRestClient) {
-        this.daangnCareersPublicRestClient = daangnCareersPublicRestClient;
-    }
+    private static final String DAANGN_BOARD_URL = "https://boards-api.greenhouse.io/v1/boards/daangn/jobs";
+    private static final String DAANGNPAY_BOARD_URL = "https://boards-api.greenhouse.io/v1/boards/daangnpay/jobs";
+    private static final String JOB_URL_PREFIX = "https://careers.daangn.com/jobs/role/";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public List<RecruitmentNoticeDto> scrap() throws IOException {
-        DaangnCareersApiResponseDto res = daangnCareersPublicRestClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/page-data/jobs/page-data.json")
-                        .build())
-                .retrieve()
-                .body(DaangnCareersApiResponseDto.class);
+        List<RecruitmentNoticeDto> results = new ArrayList<>();
+        results.addAll(fetchBoard(DAANGN_BOARD_URL));
+        results.addAll(fetchBoard(DAANGNPAY_BOARD_URL));
+        return results;
+    }
 
-        // 당근 직무 목록 해시맵화
-        Map<String, String> depMap = new HashMap<>();
-        for (var i : res.result().data().allJobDepartment().nodes()) {
-            depMap.put(i.id(), i.name());
+    private List<RecruitmentNoticeDto> fetchBoard(String apiUrl) throws IOException {
+        String json = Jsoup.connect(apiUrl)
+                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36")
+                .ignoreContentType(true)
+                .timeout(15000)
+                .execute()
+                .body();
+
+        JsonNode root = OBJECT_MAPPER.readTree(json);
+        JsonNode jobs = root.get("jobs");
+
+        List<RecruitmentNoticeDto> results = new ArrayList<>();
+        if (jobs == null || jobs.isEmpty()) {
+            return results;
         }
 
-        return res.result().data().allDepartmentFilteredJobPost().nodes().stream()
-                .map(node -> {
-                    Set<String> categories = node.departments().stream()
-                            .map(a -> depMap.get(a.id()))
-                            .collect(Collectors.toSet());
-                    Set<String> corporateCodes = Set.of(PredefinedCorporate.fromId(node.corporate()).name());
+        for (JsonNode job : jobs) {
+            String id = job.get("id").asText();
+            String title = job.get("title").asText();
+            String url = JOB_URL_PREFIX + id + "/";
 
-                    return RecruitmentNoticeDto.builder()
-                            .jobOfferTitle(node.title())
-                            .url(node.absoluteUrl())
-                            .categories(categories)
-                            .corporateCodes(corporateCodes)
-                            .build();
-                }).collect(Collectors.toList());
+            String corporateValue = getMetadataValue(job, "Corporate");
+            String division = getMetadataValue(job, "Division");
+
+            PredefinedCorporate corporate = toCorporate(corporateValue);
+            Set<String> categories = division.isBlank() ? new HashSet<>() : Set.of(division);
+
+            results.add(RecruitmentNoticeDto.builder()
+                    .jobOfferTitle(title)
+                    .url(url)
+                    .corporateCodes(Set.of(corporate.name()))
+                    .categories(categories)
+                    .build());
+        }
+
+        return results;
     }
 
-    private record DaangnCareersApiResponseDto(ResultDto result) {
-
+    private String getMetadataValue(JsonNode job, String metadataName) {
+        JsonNode metadata = job.get("metadata");
+        if (metadata == null) return "";
+        for (JsonNode meta : metadata) {
+            if (metadataName.equals(meta.path("name").asText())) {
+                JsonNode value = meta.get("value");
+                return (value == null || value.isNull()) ? "" : value.asText();
+            }
+        }
+        return "";
     }
 
-    private record ResultDto(ResultDataDto data) {
-
-    }
-
-    private record ResultDataDto(DepartmentFilteredJobPostDto allDepartmentFilteredJobPost, AllJobDepartmentDto allJobDepartment) {
-
-    }
-
-    private record DepartmentFilteredJobPostDto(List<DepartmentFilteredJobPostNodeDto> nodes) {
-
-    }
-
-    private record DepartmentFilteredJobPostNodeDto(String title,
-                                                    String corporate, // 법인
-                                                    String absoluteUrl,
-                                                    List<NodeDepartmentDto> departments // 직무
-    ) {
-
-    }
-
-    private record NodeDepartmentDto(String id, String name) {
-
-    }
-
-
-
-    private record AllJobDepartmentDto(List<AllJobDepartmentNodeDto> nodes) {
-
-    }
-
-    private record AllJobDepartmentNodeDto(String id, String name) {
-
+    private PredefinedCorporate toCorporate(String corporateValue) {
+        if ("당근페이".equals(corporateValue)) {
+            return PredefinedCorporate.KARROT_PAY;
+        }
+        return PredefinedCorporate.KARROT_MARKET;
     }
 }

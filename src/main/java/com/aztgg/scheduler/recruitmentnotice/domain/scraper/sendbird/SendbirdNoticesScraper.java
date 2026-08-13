@@ -1,133 +1,76 @@
 package com.aztgg.scheduler.recruitmentnotice.domain.scraper.sendbird;
 
 import com.aztgg.scheduler.global.asset.PredefinedCorporate;
-import com.aztgg.scheduler.global.logging.AppLogger;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SendbirdNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
-    private static final String SENDBIRD_CAREERS_URL = "https://sendbird.com/ko/careers";
-    private final RestClient sendbirdCareersPublicRestClient;
-
-    public SendbirdNoticesScraper(RestClient sendbirdCareersPublicRestClient) {
-        this.sendbirdCareersPublicRestClient = sendbirdCareersPublicRestClient;
-    }
+    private static final String API_URL = "https://boards-api.greenhouse.io/v1/boards/sendbird/jobs?content=false";
+    private static final String JOB_URL_PREFIX = "https://delight.ai/ko/careers?gh_jid=";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public List<RecruitmentNoticeDto> scrap() throws IOException {
-        try {
-            AppLogger.infoLog("Starting to scrape Sendbird job postings from Greenhouse API");
-            
-            SendbirdJobsApiResponseDto response = sendbirdCareersPublicRestClient.get()
-                    .uri("/jobs?content=false")
-                    .retrieve()
-                    .body(SendbirdJobsApiResponseDto.class);
-            
-            if (response == null || response.jobs() == null) {
-                AppLogger.warnLog("No job postings found in Sendbird Greenhouse API response");
-                return Collections.emptyList();
-            }
-            
-            // 웹사이트에서 카테고리 정보 크롤링
-            Map<String, String> jobCategories = scrapeJobCategories();
-            
-            List<RecruitmentNoticeDto> notices = response.jobs().stream()
-                    .map(job -> convertToRecruitmentNotice(job, jobCategories))
-                    .collect(Collectors.toList());
+        String json = Jsoup.connect(API_URL)
+                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36")
+                .ignoreContentType(true)
+                .timeout(15000)
+                .execute()
+                .body();
 
-            AppLogger.infoLog("Successfully scraped {} Sendbird job notices from Greenhouse API", notices.size());
-            return notices;
-            
-        } catch (Exception e) {
-            AppLogger.errorLog("Failed to fetch jobs from Sendbird Greenhouse API.", e);
+        SendbirdJobsApiResponseDto response = OBJECT_MAPPER.readValue(json, SendbirdJobsApiResponseDto.class);
+        if (response.jobs() == null) {
             return Collections.emptyList();
         }
+
+        return response.jobs().stream()
+                .map(job -> {
+                    Set<String> categories = extractCategories(job);
+                    return RecruitmentNoticeDto.builder()
+                            .jobOfferTitle(job.title().strip())
+                            .url(JOB_URL_PREFIX + job.id())
+                            .categories(categories)
+                            .corporateCodes(Set.of(PredefinedCorporate.SENDBIRD.name()))
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
-    private Map<String, String> scrapeJobCategories() {
-        try {
-            Document document = Jsoup.connect(SENDBIRD_CAREERS_URL)
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
-                    .timeout(10000)
-                    .get();
-            
-            Map<String, String> categories = new HashMap<>();
-            
-            // 채용 공고 목록에서 각 공고의 카테고리 정보 추출
-            document.select("div.job-wrap").forEach(jobElement -> {
-                Element titleElement = jobElement.selectFirst("div.title");
-                Element departmentElement = jobElement.selectFirst("div.department");
-                
-                if (titleElement != null && departmentElement != null) {
-                    String title = titleElement.text().trim();
-                    String category = departmentElement.text().trim();
-                    if (!title.isEmpty() && !category.isEmpty()) {
-                        categories.put(title, category);
-                    }
-                }
-            });
-            
-            AppLogger.infoLog("Successfully scraped {} job categories from Sendbird website", categories.size());
-            return categories;
-            
-        } catch (Exception e) {
-            AppLogger.warnLog("Failed to scrape job categories from Sendbird website: {}", e.getMessage());
-            return Collections.emptyMap();
-        }
+    private Set<String> extractCategories(SendbirdJobDto job) {
+        if (job.metadata() == null) return new HashSet<>();
+        return job.metadata().stream()
+                .filter(m -> "External department name".equals(m.name()))
+                .filter(m -> m.value() != null)
+                .flatMap(m -> m.value().stream())
+                .collect(Collectors.toSet());
     }
 
-    private RecruitmentNoticeDto convertToRecruitmentNotice(SendbirdJobDto job, Map<String, String> jobCategories) {
-        LocalDateTime startAt = job.firstPublished() != null ? 
-            job.firstPublished().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime() : null;
-        LocalDateTime endAt = job.updatedAt() != null ? 
-            job.updatedAt().atZoneSameInstant(ZoneOffset.UTC).toLocalDateTime() : null;
-            
-        Set<String> categories = new HashSet<>();
-        
-        // 웹사이트에서 크롤링한 카테고리 정보 사용
-        String category = jobCategories.get(job.title());
-        if (category != null && !category.isEmpty()) {
-            categories.add(category);
-        }
-        
-        String jobUrl = "https://sendbird.com/ko/careers?gh_jid=" + job.id();
-            
-        return RecruitmentNoticeDto.builder()
-                .jobOfferTitle(job.title())
-                .url(jobUrl)
-                .categories(categories)
-                .corporateCodes(Set.of(PredefinedCorporate.SENDBIRD.name()))
-                .startAt(startAt)
-                .endAt(endAt)
-                .build();
-    }
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private record SendbirdJobsApiResponseDto(List<SendbirdJobDto> jobs) {}
 
-    private record SendbirdJobsApiResponseDto(List<SendbirdJobDto> jobs, MetaDto meta) {}
-
-    private record MetaDto(Integer total) {}
-
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private record SendbirdJobDto(
             Long id,
             String title,
-            @JsonProperty("absolute_url") String absoluteUrl,
-            @JsonProperty("company_name") String companyName,
-            LocationDto location,
-            @JsonProperty("first_published") OffsetDateTime firstPublished,
-            @JsonProperty("updated_at") OffsetDateTime updatedAt
+            List<MetadataDto> metadata
     ) {}
 
-    private record LocationDto(String name) {}
-} 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private record MetadataDto(
+            String name,
+            List<String> value,
+            @JsonProperty("value_type") String valueType
+    ) {}
+}
