@@ -6,6 +6,7 @@ import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNotic
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
@@ -22,7 +23,8 @@ public class LineNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private static final String PAGE_DATA_URL = "https://careers.linecorp.com/page-data/ko/jobs/page-data.json";
     private static final String DETAIL_URL = "https://careers.linecorp.com/ko/jobs/%s";
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
 
     @Override
     public List<RecruitmentNoticeDto> scrap() throws IOException {
