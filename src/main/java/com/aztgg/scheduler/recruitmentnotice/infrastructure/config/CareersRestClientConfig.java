@@ -44,24 +44,6 @@ public class CareersRestClientConfig {
                 .build();
     }
 
-    @Bean(name = "lineCareersPublicRestClient")
-    public RestClient lineCareersPublicRestClient() {
-        return RestClient.builder()
-                .baseUrl("https://careers.linecorp.com")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
-
-    @Bean(name = "daangnCareersPublicRestClient")
-    public RestClient daangnCareersPublicRestClient() {
-        return RestClient.builder()
-                .baseUrl("https://about.daangn.com")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
-
     @Bean(name = "kakaoBankCareersPublicRestClient")
     public RestClient kakaoBankCareersPublicRestClient() {
         return RestClient.builder()
@@ -89,12 +71,4 @@ public class CareersRestClientConfig {
                 .build();
     }
 
-    @Bean(name = "sendbirdCareersPublicRestClient")
-    public RestClient sendbirdCareersPublicRestClient() {
-        return RestClient.builder()
-                .baseUrl("https://boards-api.greenhouse.io/v1/boards/sendbird")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
 }

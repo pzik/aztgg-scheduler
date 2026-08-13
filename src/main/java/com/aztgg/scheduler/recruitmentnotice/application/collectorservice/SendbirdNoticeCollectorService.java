@@ -8,7 +8,6 @@ import com.aztgg.scheduler.recruitmentnotice.domain.scraper.Scraper;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.dto.RecruitmentNoticeDto;
 import com.aztgg.scheduler.recruitmentnotice.domain.scraper.sendbird.SendbirdNoticesScraper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,18 +15,14 @@ import java.util.List;
 @Service
 public class SendbirdNoticeCollectorService extends RecruitmentNoticeCollectorService {
 
-    private final RestClient sendbirdCareersPublicRestClient;
-
-    public SendbirdNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository,
-                                         RestClient sendbirdCareersPublicRestClient) {
+    public SendbirdNoticeCollectorService(RecruitmentNoticeRepository recruitmentNoticeRepository) {
         super(recruitmentNoticeRepository, ScrapGroupCodeType.SENDBIRD);
-        this.sendbirdCareersPublicRestClient = sendbirdCareersPublicRestClient;
     }
 
     @Override
     protected List<RecruitmentNoticeDto> result() {
         try {
-            Scraper<List<RecruitmentNoticeDto>> scraper = new SendbirdNoticesScraper(sendbirdCareersPublicRestClient);
+            Scraper<List<RecruitmentNoticeDto>> scraper = new SendbirdNoticesScraper();
             return scraper.scrap();
         } catch (Exception e) {
             AppLogger.errorLog("Error occurred while scraping Sendbird job postings", e);
