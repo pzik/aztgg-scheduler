@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class SendbirdNoticesScraper implements Scraper<List<RecruitmentNoticeDto>> {
 
     private static final String API_URL = "https://boards-api.greenhouse.io/v1/boards/sendbird/jobs?content=false";
-    private static final String JOB_URL_PREFIX = "https://delight.ai/ko/careers?gh_jid=";
+    private static final String JOB_URL_FORMAT = "https://delight.ai/ko/careers?gh_jid=%s#jobs";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
@@ -40,7 +40,7 @@ public class SendbirdNoticesScraper implements Scraper<List<RecruitmentNoticeDto
                     Set<String> categories = extractCategories(job);
                     return RecruitmentNoticeDto.builder()
                             .jobOfferTitle(job.title().strip())
-                            .url(JOB_URL_PREFIX + job.id())
+                            .url(String.format(JOB_URL_FORMAT, job.id()))
                             .categories(categories)
                             .corporateCodes(Set.of(PredefinedCorporate.SENDBIRD.name()))
                             .build();
@@ -64,6 +64,7 @@ public class SendbirdNoticesScraper implements Scraper<List<RecruitmentNoticeDto
     private record SendbirdJobDto(
             Long id,
             String title,
+            @JsonProperty("absolute_url") String absoluteUrl,
             List<MetadataDto> metadata
     ) {}
 
